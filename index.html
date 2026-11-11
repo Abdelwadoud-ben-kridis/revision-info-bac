@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0d1016">
 <title>Algo ⟷ Python · Info 4e Sc</title>
 <script>try{var th=localStorage.getItem("devoir-info-4sc-v1-theme")||"dark";if(th!=="auto")document.documentElement.setAttribute("data-theme",th);document.documentElement.setAttribute("data-mode",th==="auto"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):th);}catch(e){document.documentElement.setAttribute("data-theme","dark");document.documentElement.setAttribute("data-mode","dark");}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -315,6 +316,37 @@ main{padding:26px clamp(16px,4vw,44px) 80px;max-width:1120px;width:100%}
 .two .expect{margin:0}
 .tbl.small td{padding:4px 6px;text-align:center;font-size:12px}
 @media (max-width:700px){.two{grid-template-columns:1fr}}
+html{overflow-x:hidden}
+@media (max-width: 860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .rail{max-width:100vw;scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
+  main{padding:16px 14px 70px}
+  .tabs .sp{display:none}
+  .tabs button{padding:8px 10px;font-size:14px}
+  .prob,.mod,.ex,.q,.card{padding:13px 12px}
+  .prob h3,.mod h3{min-width:0}
+  .ans textarea,.tin{font-size:16px}
+  .blank{font-size:16px}
+  .opts{grid-template-columns:1fr}
+  .result .note{font-size:52px}
+  .fhead{padding:12px}
+  .fhead .tags{justify-content:flex-start}
+  .chgrid{grid-template-columns:1fr}
+}
+@media (max-width: 560px){
+  .tiles{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+  .tile{font-size:10px;padding:4px 0}
+  .tile .hx{width:32px;height:32px;font-size:14px}
+  :root[data-mode="dark"] .tile .hx{width:36px}
+  .tile .rkn{font-size:8.5px;letter-spacing:.02em}
+  .cover{padding:18px 14px 14px}
+  .cover .kick{font-size:10.5px}
+  .face pre{font-size:12.3px}
+  .formula{display:block;font-size:12.5px;overflow-wrap:anywhere}
+  .lock .btn,.selfgrade .btn{flex:1 1 auto;justify-content:center}
+  .meter .big{font-size:30px}
+}
 </style>
 </head>
 <body>
