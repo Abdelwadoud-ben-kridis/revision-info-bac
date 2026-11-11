@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Révision Devoir de contrôle Info</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a study desk. Left rail of six chapters; each lesson shows the same code twice,
+   on squared exam paper (algorithme, la copie) and on a dark machine slab (Python, la machine). */
+:root{
+  --bg:#f4f5f8; --surface:#ffffff; --ink:#1b2130; --muted:#5d6676; --line:#e1e4eb;
+  --paper:#fdfdfb; --grid:#e9edf4; --slab:#1c2130; --slab-line:#2b3245;
+  --good:#2b8a3e; --bad:#c92a2a; --warn:#b5730a;
+  --c1:#d6336c; --c2:#e8590c; --c3:#b8860b; --c4:#2b8a3e; --c5:#0c8599; --c6:#1971c2; --cx:#5f3dc4;
+  --kw:#1c5fd0; --fn:#0f7b6c; --str:#b45309; --cst:#a21caf; --op:#c2410c; --num:#be123c; --com:#8b95a5;
+  --font-display:"Fredoka","Nunito",system-ui,sans-serif;
+  --font-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-code:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --c:var(--c1);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1218; --surface:#171b24; --ink:#e7e9ef; --muted:#97a0b2; --line:#283043;
+    --paper:#181c25; --grid:#222838; --slab:#0b0e14; --slab-line:#252c3c;
+    --good:#45c46a; --bad:#ff6b6b; --warn:#f2b84b;
+    --c1:#f06595; --c2:#ff8a3d; --c3:#f0bf3c; --c4:#45c46a; --c5:#22b8cf; --c6:#4dabf7; --cx:#9775fa;
+    --kw:#7aa2ff; --fn:#5fd4c4; --str:#f2b56b; --cst:#d68cff; --op:#ff8f6b; --num:#ff8fa3; --com:#6b7488;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1218; --surface:#171b24; --ink:#e7e9ef; --muted:#97a0b2; --line:#283043;
+  --paper:#181c25; --grid:#222838; --slab:#0b0e14; --slab-line:#252c3c;
+  --good:#45c46a; --bad:#ff6b6b; --warn:#f2b84b;
+  --c1:#f06595; --c2:#ff8a3d; --c3:#f0bf3c; --c4:#45c46a; --c5:#22b8cf; --c6:#4dabf7; --cx:#9775fa;
+  --kw:#7aa2ff; --fn:#5fd4c4; --str:#f2b56b; --cst:#d68cff; --op:#ff8f6b; --num:#ff8fa3; --com:#6b7488;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
+body{min-height:100%}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
+input{font:inherit;color:inherit}
+:focus-visible{outline:2.5px solid var(--c);outline-offset:2px;border-radius:6px}
+code{font-family:var(--font-code);font-size:.88em;font-variant-ligatures:none}
+small{color:var(--muted);font-size:.8em}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;text-wrap:balance;line-height:1.15}
+
+/* ---------- shell */
+.app{display:grid;grid-template-columns:268px minmax(0,1fr);min-height:100vh}
+.rail{position:sticky;top:0;height:100vh;overflow:auto;border-right:1px solid var(--line);background:var(--surface);padding:20px 14px;display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;gap:10px;align-items:center;padding:0 6px}
+.brand .mark{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-family:var(--font-display);font-weight:700;color:#fff;background:var(--ink);font-size:15px;letter-spacing:.02em}
+:root[data-theme="dark"] .brand .mark{color:var(--bg)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .brand .mark{color:var(--bg)}}
+.brand b{font-family:var(--font-display);font-weight:600;font-size:17px;display:block;line-height:1.1}
+.brand span{font-size:12.5px;color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:3px}
+.nav .lab{font-size:11px;font-weight:800;letter-spacing:.13em;color:var(--muted);padding:6px 8px 4px;text-transform:uppercase}
+.nav a{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center;padding:7px 8px;border-radius:10px;text-decoration:none;color:var(--ink);font-weight:700;font-size:14.5px}
+.nav a:hover{background:color-mix(in srgb,var(--c) 9%,transparent)}
+.nav a.on{background:color-mix(in srgb,var(--c) 14%,transparent)}
+.nav .num{width:30px;height:30px;border-radius:50%;border:2px solid var(--c);color:var(--c);display:grid;place-items:center;font-family:var(--font-display);font-weight:600;font-size:14px}
+.nav a.on .num{background:var(--c);color:var(--surface)}
+.nav .bar{grid-column:2;height:4px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:-4px}
+.nav .bar i{display:block;height:100%;background:var(--c);border-radius:4px}
+.rail .foot{margin-top:auto;font-size:12.5px;color:var(--muted);padding:0 8px;display:flex;flex-direction:column;gap:8px}
+.linkbtn{color:var(--muted);text-decoration:underline;text-underline-offset:3px;font-size:12.5px;text-align:left}
+main{padding:30px clamp(16px,4vw,48px) 80px;max-width:1100px;width:100%}
+
+/* ---------- common */
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c)}
+.muted{color:var(--muted)}
+.btn{text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;font-weight:800;font-size:15px;background:var(--c);color:#fff;border:2px solid var(--c);transition:transform .12s}
+:root[data-theme="dark"] .btn{color:#0f1218}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#0f1218}}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--c)}
+.btn.small{padding:6px 12px;font-size:13.5px;border-radius:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}
+.pill{display:inline-block;font-size:12px;font-weight:800;padding:2px 10px;border-radius:99px;border:1.5px solid currentColor}
+.good{color:var(--good)}.bad{color:var(--bad)}
+
+/* ---------- home */
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:28px;align-items:stretch;margin-bottom:28px}
+.hero h1{font-size:clamp(34px,5vw,54px);font-weight:700;margin:8px 0 12px;letter-spacing:-.01em}
+.hero h1 em{font-style:normal;color:var(--c)}
+.hero p{max-width:56ch;color:var(--muted);font-size:17px}
+.hero .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.meter{display:flex;gap:14px;align-items:center;margin-top:22px}
+.meter .big{font-family:var(--font-display);font-size:40px;font-weight:600;font-variant-numeric:tabular-nums}
+.meter .track{flex:1;height:10px;border-radius:10px;background:var(--line);overflow:hidden;max-width:320px}
+.meter .track i{display:block;height:100%;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c4),var(--c5),var(--c6));border-radius:10px}
+.flashq{border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:12px}
+.flashq .top{display:flex;justify-content:space-between;align-items:center}
+.chgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.chcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:var(--ink);border-top:4px solid var(--c);transition:transform .15s,box-shadow .15s}
+.chcard:hover{transform:translateY(-2px);box-shadow:0 8px 24px -14px color-mix(in srgb,var(--c) 60%,transparent)}
+.chcard h3{font-size:19px}
+.chcard p{font-size:14px;color:var(--muted);flex:1}
+.chcard .stats{display:flex;gap:12px;font-size:12.5px;color:var(--muted);font-weight:700}
+.prog{height:6px;border-radius:6px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--c)}
+.sech{display:flex;justify-content:space-between;align-items:baseline;margin:34px 0 12px;gap:12px;flex-wrap:wrap}
+.sech h2{font-size:24px}
+
+/* ---------- chapter */
+.chead{display:flex;gap:18px;align-items:center;margin-bottom:6px}
+.chead .num{width:62px;height:62px;flex:none;border-radius:18px;border:3px solid var(--c);color:var(--c);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:30px}
+.chead h1{font-size:clamp(26px,3.6vw,38px)}
+.goal{color:var(--muted);max-width:68ch;margin:6px 0 18px}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:22px;position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+.tabs button{padding:10px 16px;font-weight:800;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;font-size:15px}
+.tabs button.on{color:var(--c);border-color:var(--c)}
+.tabs .sp{flex:1}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;align-self:center;margin-bottom:6px}
+.seg button{padding:5px 11px;font-size:13px;font-weight:800;color:var(--muted)}
+.seg button.on{background:var(--c);color:var(--surface)}
+.block{margin-bottom:22px}
+.block h3{font-size:19px;margin-bottom:4px}
+.block .sub{color:var(--muted);font-size:14px;margin-bottom:10px}
+
+/* the two faces */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pair.only-algo,.pair.only-py{grid-template-columns:1fr}
+.pair.only-algo .face.py,.pair.only-py .face.algo{display:none}
+.face{border-radius:14px;overflow:hidden;min-width:0;display:flex;flex-direction:column}
+.face .lab{font-size:11px;font-weight:800;letter-spacing:.14em;padding:8px 14px 6px;display:flex;justify-content:space-between}
+.face pre{margin:0;padding:6px 0 12px;overflow-x:auto;font-family:var(--font-code);font-size:13.5px;line-height:1.6;font-variant-ligatures:none;flex:1}
+.face .ln{display:inline-block;width:2.6em;text-align:right;padding-right:1em;color:var(--com);opacity:.6;user-select:none;font-size:.85em}
+.face.algo{background-color:var(--paper);border:1px solid var(--line);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:13px 13px;background-position:-1px -1px}
+.face.algo .lab{color:var(--c);background:var(--paper);border-bottom:1px solid var(--line)}
+.face.py{background:var(--slab);border:1px solid var(--slab-line);color:#dfe4ee;
+  --kw:#82aaff;--fn:#7fdbca;--str:#f2b56b;--cst:#d68cff;--op:#ff9e7a;--num:#ff8fa3;--com:#6b7488}
+.face.py .lab{color:#8fb4ff;border-bottom:1px solid var(--slab-line)}
+.face .cons{border-top:1px dashed var(--slab-line);padding:8px 14px 10px;font-family:var(--font-code);font-size:12.5px;color:#9aa3b5;white-space:pre;overflow-x:auto}
+.face .cons::before{content:"CONSOLE";display:block;font-family:var(--font-body);font-size:10.5px;font-weight:800;letter-spacing:.14em;color:#45c46a;margin-bottom:2px}
+.kw{color:var(--kw);font-weight:700}.fn{color:var(--fn)}.str{color:var(--str)}.cst{color:var(--cst);font-weight:700}.op{color:var(--op);font-weight:700}.num{color:var(--num)}.com{color:var(--com);font-style:italic}.arr{color:var(--op);font-weight:700}
+.mod{border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:16px;margin-bottom:18px}
+.mod .mh{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.mod .tagn{font-family:var(--font-display);font-weight:600;color:var(--c);border:2px solid var(--c);border-radius:8px;padding:0 8px;font-size:15px}
+.mod h3{font-size:18px;flex:1;min-width:200px}
+.mod .kind{font-family:var(--font-code);font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:7px;padding:2px 8px}
+.mod .note{font-size:14px;color:var(--muted);margin:-4px 0 10px}
+.tdol{border-collapse:collapse;font-size:13px;margin-top:10px}
+.tdol caption{text-align:left;font-size:11px;font-weight:800;letter-spacing:.13em;color:var(--c);padding-bottom:3px}
+.tdol th,.tdol td{border:1px solid var(--line);padding:3px 12px;text-align:left}
+.tdol th{color:var(--muted);font-size:12px}
+.tdol td:first-child{font-family:var(--font-code)}
+.tbl{width:100%;border-collapse:collapse;font-size:14.5px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.tblwrap{overflow-x:auto;border-radius:14px}
+.tbl th{text-align:left;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--c);padding:10px 14px;border-bottom:2px solid var(--c);font-weight:800}
+.tbl td{padding:8px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl.dict td,.tbl.mono td{font-family:var(--font-code);font-size:13.5px;font-variant-ligatures:none}
+.tbl.dict td:nth-child(2),.tbl.dict td:nth-child(4),.tbl.mono td:nth-child(2){color:var(--kw)}
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.box{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:12px;padding:12px 16px;font-size:15px}
+.box .bt{font-size:11.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--c);margin-bottom:4px}
+.box.piege{border-left-color:var(--bad)}.box.piege .bt{color:var(--bad)}
+.box.astuce{border-left-color:var(--good)}.box.astuce .bt{color:var(--good)}
+.box.cours{border-left-color:var(--cx)}.box.cours .bt{color:var(--cx)}
+
+/* ---------- quiz */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.score{font-family:var(--font-display);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:14px}
+.q .qt{font-weight:700;font-size:16.5px;margin-bottom:12px;display:flex;gap:10px}
+.q .qn{font-family:var(--font-display);color:var(--c);flex:none}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.opt{text-align:left;padding:10px 14px;border:1.5px solid var(--line);border-radius:11px;font-family:var(--font-code);font-size:14px;font-variant-ligatures:none;background:var(--bg);transition:border-color .12s}
+.opt:hover:not(:disabled){border-color:var(--c)}
+.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.opt:disabled{cursor:default}
+.why{margin-top:10px;font-size:14.5px;padding:9px 12px;border-radius:10px;background:var(--bg)}
+.why b.v{color:var(--good)}.why b.x{color:var(--bad)}
+
+/* ---------- exercises */
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:16px}
+.ex .et{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.ex h4{font-size:16px;font-weight:800}
+.done-pill{font-size:12px;font-weight:800;color:var(--good);border:1.5px solid var(--good);border-radius:99px;padding:1px 9px}
+.blank{font-family:var(--font-code);font-size:13px;font-variant-ligatures:none;background:color-mix(in srgb,var(--c) 10%,transparent);border:none;border-bottom:2px solid var(--c);border-radius:4px 4px 0 0;padding:1px 4px;min-width:3ch;color:inherit;outline:none}
+.face.py .blank{background:#2a3146;color:#fff;border-bottom-color:#82aaff}
+.blank.ok{border-bottom-color:var(--good)!important;background:color-mix(in srgb,var(--good) 18%,transparent)!important}
+.blank.no{border-bottom-color:var(--bad)!important;background:color-mix(in srgb,var(--bad) 18%,transparent)!important}
+.exbar{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.symkeys{display:flex;gap:4px}
+.symkeys button{font-family:var(--font-code);border:1.5px solid var(--line);border-radius:8px;padding:2px 10px;font-size:15px;background:var(--bg)}
+.msg{font-size:14.5px;font-weight:700}
+.tin{font-family:var(--font-code);padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);min-width:200px;font-size:14px}
+.parsons{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pz{border:1.5px dashed var(--line);border-radius:12px;padding:8px;min-height:80px;display:flex;flex-direction:column;gap:5px}
+.pz .plab{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--muted);padding:2px 4px}
+.pline{font-family:var(--font-code);font-size:13px;text-align:left;white-space:pre;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);overflow-x:auto;font-variant-ligatures:none}
+.pline:hover{border-color:var(--c)}
+.pz.ans .pline{background:var(--paper)}
+.subh{font-family:var(--font-display);font-weight:600;font-size:20px;margin:26px 0 12px;display:flex;align-items:center;gap:10px}
+.subh .cnt{font-family:var(--font-body);font-size:13px;color:var(--muted);font-weight:700}
+
+/* ---------- flashcards */
+.flash{max-width:560px;margin:10px auto;perspective:1200px}
+.fc{position:relative;height:230px;cursor:pointer;transform-style:preserve-3d;transition:transform .5s}
+.fc.flip{transform:rotateY(180deg)}
+.fc .side{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center}
+.fc .front{border:1px solid var(--line);background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:13px 13px}
+.fc .back{background:var(--slab);color:#e6e9ef;transform:rotateY(180deg)}
+.fc .big{font-family:var(--font-code);font-size:24px;font-weight:500;font-variant-ligatures:none}
+.fc .lab{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--c)}
+.fc .back .lab{color:#8fb4ff}
+.fnav{display:flex;justify-content:center;gap:10px;margin-top:16px;align-items:center;flex-wrap:wrap}
+
+/* ---------- devoir */
+.timer{font-family:var(--font-display);font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
+.timer.low{color:var(--bad)}
+.dvstick{position:sticky;top:0;z-index:6;background:var(--bg);padding:10px 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);margin-bottom:16px;gap:12px;flex-wrap:wrap}
+.result{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.result .note{font-family:var(--font-display);font-size:64px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.hist{display:flex;gap:8px;flex-wrap:wrap}
+.hist span{font-size:13px;font-weight:800;border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-variant-numeric:tabular-nums}
+.tagch{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--c);text-transform:uppercase}
+
+@media (max-width: 860px){
+  .app{grid-template-columns:1fr}
+  .rail{position:sticky;height:auto;flex-direction:row;align-items:center;overflow-x:auto;padding:10px 12px;gap:10px;border-right:none;border-bottom:1px solid var(--line);z-index:10}
+  .brand span,.nav .lab,.rail .foot,.nav .bar,.nav .t{display:none}
+  .nav{flex-direction:row}
+  .nav a{grid-template-columns:30px;padding:4px}
+  .hero,.pair,.parsons{grid-template-columns:1fr}
+  .tabs{top:58px}
+  .dvstick{top:58px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+.theme{align-self:flex-start;margin:0 0 4px;--c:var(--ink)}
+.theme button.on{background:var(--ink);color:var(--surface)}
+@media (max-width: 860px){.rail .foot{display:flex;margin-top:0;margin-left:auto;padding:0}.rail .foot>span,.rail .foot>.linkbtn{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="rail" id="rail"></aside>
+  <main id="main"></main>
+</div>
+<script>
+const DATA = [{"id": "dictionnaire", "n": 1, "title": "Le dictionnaire algo ⟷ Python", "short": "Dictionnaire", "goal": "Traduire chaque instruction et chaque fonction prédéfinie d'un langage à l'autre.", "lesson": [{"t": "table", "head": ["Algorithme (copie)", "Python (machine)", "Fonction en algorithme", "Python"], "cls": "dict", "rows": [["x ← 5", "x = 5", "long(ch)", "len(ch)"], ["=  ≠", "==  !=", "pos(a, ch)", "ch.find(a)  <small>-1 si absent</small>"], ["≤  ≥", "<=  >=", "sous_chaîne(ch, d, f)", "ch[d:f]  <small>f exclu</small>"], ["div  mod", "//  %", "effacer(ch, d, f)", "ch[:d] + ch[f:]"], ["et  ou  non", "and  or  not", "majus(ch)", "ch.upper()"], ["Vrai  Faux", "True  False", "convch(n)", "str(n)"], ["Ecrire(x)", "print(x)", "valeur(ch)", "int(ch)  <small>ou float(ch)</small>"], ["Ecrire(x, \" \")  <small>même ligne</small>", "print(x, end=\" \")", "estnum(ch)", "ch.isnumeric()"], ["Lire(ch)  <small>chaîne</small>", "ch = input()", "ord(c)  chr(n)", "ord(c)  chr(n)"], ["Lire(n)  <small>entier</small>", "n = int(input())", "abs(x)  ent(x)", "abs(x)  int(x)"], ["Lire(x)  <small>réel</small>", "x = float(input())", "arrondi(x)", "round(x)"], ["n ∈ [5..20]", "5 <= n <= 20", "racinecarré(x)", "sqrt(x)  <small>from math</small>"], ["c ∈ {\"A\", \"E\"}", "c in {\"A\", \"E\"}", "aléa(a, b)", "randint(a, b)  <small>from random</small>"]]}, {"t": "boxes", "items": [{"k": "coeur", "title": "div et mod", "html": "<code>17 div 5 = 3</code> · <code>17 mod 5 = 2</code> · <code>17 / 5 = 3.4</code><br><code>n mod 2 = 0</code> : n est pair · <code>n mod d = 0</code> : d divise n<br><code>n mod 10</code> : dernier chiffre · <code>n div 10</code> : n sans son dernier chiffre"}, {"k": "coeur", "title": "codes et priorités", "html": "<code>\"0\" = 48</code> · <code>\"A\" = 65</code> · <code>\"a\" = 97</code> (écart de 32 entre majuscule et minuscule).<br>Priorités : <code>( )</code>, puis <code>* / div mod</code>, puis <code>+ -</code>, puis les comparaisons. En logique : <b>non</b>, puis <b>et</b>, puis <b>ou</b>."}, {"k": "piege", "title": "input()", "html": "<code>input()</code> rend <b>toujours une chaîne</b>. Sans <code>int( )</code>, <code>\"5\" + \"3\"</code> donne <code>\"53\"</code>."}, {"k": "piege", "title": "les indices", "html": "Ils commencent à <b>0</b> : dernier caractère <code>ch[long(ch) - 1]</code>, dernière case <code>T[n - 1]</code>."}, {"k": "piege", "title": "round", "html": "<code>round(2.5)</code> donne <b>2</b> et <code>round(3.5)</code> donne <b>4</b> : Python arrondit un ,5 vers l'entier pair."}]}], "quiz": [{"q": "Que vaut <code>17 div 5</code> ?", "o": ["3", "3.4", "2", "4"], "why": "div donne le quotient entier : 17 = 5 × 3 + 2.", "a": 0}, {"q": "Que vaut <code>17 mod 5</code> ?", "o": ["2", "3", "5", "0"], "why": "mod donne le reste : 17 = 5 × 3 + <b>2</b>.", "a": 0}, {"q": "Comment écrit-on <code>ch[long(ch) - 1]</code> en Python ?", "o": ["ch[len(ch) - 1]", "ch[len(ch)]", "ch[long(ch) - 1]", "ch.last()"], "why": "long devient len. Le dernier indice est la longueur moins 1, car on commence à 0.", "a": 0}, {"q": "Que vaut <code>sous_chaîne(\"bonjour\", 0, 3)</code> ?", "o": ["\"bon\"", "\"bonj\"", "\"onj\"", "\"bo\""], "why": "On prend les indices 0, 1 et 2 : la position de fin est <b>exclue</b>. En Python : <code>ch[0:3]</code>.", "a": 0}, {"q": "Que vaut <code>pos(\"j\", \"bonjour\")</code> ?", "o": ["3", "4", "2", "-1"], "why": "b=0, o=1, n=2, <b>j=3</b>. En Python : <code>\"bonjour\".find(\"j\")</code>.", "a": 0}, {"q": "Que vaut <code>effacer(\"bonjour\", 1, 3)</code> ?", "o": ["\"bjour\"", "\"bour\"", "\"bnjour\"", "\"bonjour\""], "why": "On efface les indices 1 et 2 (\"on\"), la fin 3 est exclue. En Python : <code>ch[:1] + ch[3:]</code>.", "a": 0}, {"q": "En Python, <code>round(2.5)</code> donne…", "o": ["2", "3", "2.5", "une erreur"], "why": "Python arrondit un ,5 vers l'entier <b>pair</b> le plus proche : 2.", "a": 0}, {"q": "Que vaut <code>ord(\"A\")</code> ?", "o": ["65", "97", "48", "1"], "why": "Code ASCII : \"0\" = 48, \"A\" = 65, \"a\" = 97.", "a": 0}, {"q": "Que vaut <code>non Vrai ou Vrai et Faux</code> ?", "o": ["Faux", "Vrai"], "why": "D'abord non : Faux. Puis et : Vrai et Faux = Faux. Enfin ou : Faux ou Faux = <b>Faux</b>.", "a": 0}, {"q": "Comment traduire <code>n ∈ [5..20]</code> en Python ?", "o": ["5 <= n <= 20", "n in [5..20]", "5 < n < 20", "n in range(5, 20)"], "why": "[5..20] contient 5 et 20. <code>range(5, 20)</code> s'arrêterait à 19.", "a": 0}, {"q": "On écrit <code>n = input()</code> puis <code>n + 1</code>. Que se passe-t-il ?", "o": ["Une erreur TypeError", "On obtient n + 1", "On obtient \"n1\"", "Rien"], "why": "n est une chaîne : chaîne + entier est interdit. Il fallait <code>n = int(input())</code>.", "a": 0}, {"q": "Que donne <code>convch(2027)</code> ?", "o": ["la chaîne \"2027\"", "l'entier 2027", "la liste des chiffres", "une erreur"], "why": "convch convertit un nombre en chaîne. En Python : <code>str(2027)</code>.", "a": 0}], "fill": [{"title": "Traduis en Python : lire n, tester s'il est pair et plus grand que 10, afficher son nombre de chiffres", "lang": "py", "src": "n = [[int]](input(\"n = \"))\nif n [[%]] 2 [[==]] 0 [[and]] n > 10:\n    print(\"pair et > 10\")\nch = [[str]](n)\nprint([[len]](ch))"}, {"title": "Traduis en algorithme", "lang": "algo", "src": "x [[←]] 7\n[[Si]] x mod 2 [[≠]] 0 Alors\n    [[Ecrire]](\"impair\")\nFinSi\nch ← [[convch]](x)"}], "trace": [{"title": "Qu'affiche ce programme ?", "lang": "py", "src": "n = 472\nprint(n % 10, n // 10, n // 100)", "ans": "2 47 4", "why": "472 % 10 = 2 (dernier chiffre), 472 // 10 = 47, 472 // 100 = 4."}, {"title": "Qu'affiche ce programme ?", "lang": "py", "src": "ch = \"bonjour\"\nprint(ch[0:3], ch.find(\"j\"), len(ch))", "ans": "bon 3 7", "why": "ch[0:3] prend les indices 0 à 2. \"j\" est à l'indice 3. La chaîne a 7 caractères."}, {"title": "Qu'affiche ce programme ?", "lang": "py", "src": "a = \"5\"\nb = 3\nprint(a + str(b), int(a) + b)", "ans": "53 8", "why": "Chaîne + chaîne colle les deux : \"53\". Entier + entier additionne : 8."}], "parsons": [], "flash": true}, {"id": "boucles", "n": 2, "title": "Conditions et boucles", "short": "Conditions, boucles", "goal": "Choisir la bonne structure : Si, Pour, Répéter ou Tant que, et la traduire sans se tromper de bornes.", "lesson": [{"t": "pair", "title": "Si… Sinon Si… Sinon", "sub": "on s'arrête au premier cas vrai", "algo": "Si moy ≥ 16 Alors\n    mention ← \"Très bien\"\nSinon Si moy ≥ 12 Alors\n    mention ← \"Bien\"\nSinon\n    mention ← \"Passable\"\nFinSi", "py": "if moy >= 16:\n    mention = \"Très bien\"\nelif moy >= 12:\n    mention = \"Bien\"\nelse:\n    mention = \"Passable\""}, {"t": "pair", "title": "Pour", "sub": "nombre de tours connu d'avance", "algo": "s ← 0\nPour i de 1 à n Faire\n    s ← s + i\nFinPour", "py": "s = 0\nfor i in range(1, n + 1):\n    s = s + i"}, {"t": "pair", "title": "Répéter… Jusqu'à", "sub": "au moins un tour : c'est le contrôle de saisie", "algo": "Répéter\n    Ecrire(\"n entre 5 et 20 : \")\n    Lire(n)\nJusqu'à (5 ≤ n) et (n ≤ 20)", "py": "n = int(input(\"n entre 5 et 20 : \"))\nwhile not (5 <= n <= 20):\n    n = int(input(\"n entre 5 et 20 : \"))", "cons": "n entre 5 et 20 : 3\nn entre 5 et 20 : 25\nn entre 5 et 20 : 12"}, {"t": "pair", "title": "Tant que", "sub": "peut-être zéro tour ; ici la somme des chiffres de n", "algo": "s ← 0\nTantque n ≠ 0 Faire\n    s ← s + n mod 10\n    n ← n div 10\nFinTantque", "py": "s = 0\nwhile n != 0:\n    s = s + n % 10\n    n = n // 10", "cons": "# avec n = 472\n>>> s\n13"}, {"t": "table", "head": ["Pour… en algorithme", "range en Python"], "rows": [["de 0 à n - 1", "range(n)"], ["de 1 à n", "range(1, n + 1)"], ["de a à b", "range(a, b + 1)"], ["de n à 1 (Pas = -1)", "range(n, 0, -1)"]], "cls": "mono"}, {"t": "boxes", "items": [{"k": "coeur", "title": "Répéter ⟷ Tant que", "html": "Condition du Tant que = <b>non</b> (condition du Jusqu'à) : on inverse chaque test et on échange <b>et ⟷ ou</b>."}, {"k": "coeur", "title": "range", "html": "range s'arrête <b>avant</b> la fin : écris Fin + 1 (Fin - 1 si le pas est négatif)."}, {"k": "piege", "title": "les initialisations", "html": "Somme : <b>0</b>. Produit : <b>1</b>. Maximum : <b>la première valeur</b>. Selon se traduit par <code>if / elif / else</code>."}]}], "quiz": [{"q": "<code>Pour i de 1 à n</code> se traduit par…", "o": ["range(1, n + 1)", "range(n)", "range(1, n)", "range(0, n + 1)"], "why": "range s'arrête avant sa borne de fin : pour aller jusqu'à n, on écrit n + 1.", "a": 0}, {"q": "<code>Pour i de n à 1 (Pas = -1)</code> se traduit par…", "o": ["range(n, 0, -1)", "range(n, 1, -1)", "range(1, n, -1)", "range(n, -1, -1)"], "why": "Avec un pas négatif, la fin est exclue aussi : pour s'arrêter à 1, on écrit 0.", "a": 0}, {"q": "Quelle boucle fait <b>toujours</b> au moins un tour ?", "o": ["Répéter… Jusqu'à", "Tant que", "Pour", "Aucune"], "why": "Le test du Répéter est à la fin : le corps s'exécute avant le premier test.", "a": 0}, {"q": "<code>Répéter … Jusqu'à n > 0</code> : en Python, la boucle s'écrit…", "o": ["while not (n > 0):", "while n > 0:", "while n < 0:", "if n > 0:"], "why": "Jusqu'à donne la condition pour <b>sortir</b>, while celle pour <b>rester</b> : on prend la négation.", "a": 0}, {"q": "La négation de <code>(1 ≤ n) et (n ≤ 10)</code> est…", "o": ["(n < 1) ou (n > 10)", "(n < 1) et (n > 10)", "(n ≤ 1) ou (n ≥ 10)", "(n > 1) et (n < 10)"], "why": "On inverse chaque comparaison (≤ devient >) et on échange et ⟷ ou.", "a": 0}, {"q": "Avant de calculer un produit dans une boucle, p vaut…", "o": ["1", "0", "la première valeur", "rien"], "why": "Avec 0, le produit resterait toujours 0.", "a": 0}, {"q": "Combien de tours fait <code>for i in range(2, 10, 3)</code> ?", "o": ["3", "2", "4", "8"], "why": "i prend 2, 5, 8. 11 dépasse 10 : on s'arrête.", "a": 0}, {"q": "Avec n = 0, combien de tours fait <code>Tantque n ≠ 0 Faire</code> ?", "o": ["0", "1", "une infinité", "une erreur"], "why": "Le test est fait avant le premier tour : il est faux tout de suite.", "a": 0}, {"q": "Le Selon de l'algorithme se traduit en Python par…", "o": ["if / elif / else", "switch", "for", "while"], "why": "Python n'a pas de switch : on enchaîne if, elif, else (ou match depuis 3.10).", "a": 0}], "fill": [{"title": "Somme des chiffres de n, en Python", "lang": "py", "src": "s = [[0]]\nwhile n [[!=]] 0:\n    s = s + n [[%]] 10\n    n = n [[//]] 10"}, {"title": "Contrôle de saisie, en algorithme", "lang": "algo", "src": "[[Répéter]]\n    Ecrire(\"n entre 5 et 20 : \")\n    [[Lire(n)|Lire (n)]]\n[[Jusqu'à]] (5 ≤ n) [[et]] (n ≤ 20)"}, {"title": "Afficher les nombres de 10 à 1", "lang": "py", "src": "for i in range([[10]], [[0]], [[-1]]):\n    print(i, end=\" \")"}], "trace": [{"title": "Que vaut s à la fin ?", "lang": "algo", "src": "s ← 0\nPour i de 1 à 4 Faire\n    s ← s + i * i\nFinPour\nEcrire(s)", "py": "s = 0\nfor i in range(1, 5):\n    s = s + i * i\nprint(s)", "ans": "30", "why": "1 + 4 + 9 + 16 = 30."}, {"title": "Qu'affiche ce programme ?", "lang": "py", "src": "n = 1234\ns = 0\nwhile n != 0:\n    s = s * 10 + n % 10\n    n = n // 10\nprint(s)", "ans": "4321", "why": "À chaque tour on décolle le dernier chiffre de n et on le colle à droite de s : c'est l'inverse de n."}, {"title": "Qu'affiche ce programme ?", "lang": "py", "src": "for i in range(5, 0, -2):\n    print(i, end=\" \")", "ans": "5 3 1", "why": "On part de 5, on retire 2 à chaque tour, et 0 est exclu (−1 aussi)."}, {"title": "Qu'affiche ce programme ?", "lang": "py", "src": "x = 7\nif x % 2 == 0:\n    print(\"pair\")\nelif x > 5:\n    print(\"grand\")\nelse:\n    print(\"petit\")", "ans": "grand", "why": "7 n'est pas pair, le premier test est faux. 7 > 5 est vrai : on affiche grand et on s'arrête."}], "parsons": [{"title": "Remets dans l'ordre : somme des chiffres de n", "lang": "algo", "lines": ["s ← 0", "Tantque n ≠ 0 Faire", "    s ← s + n mod 10", "    n ← n div 10", "FinTantque", "Ecrire(s)"]}]}, {"id": "modules", "n": 3, "title": "Fonctions et procédures", "short": "Fonctions, procédures", "goal": "Écrire l'entête juste, déclarer le T.D.O.L et passer correctement les paramètres (@ et global).", "lesson": [{"t": "table", "head": ["", "Fonction", "Procédure"], "rows": [["<b>Rôle</b>", "retourne <b>un</b> résultat simple", "fait une action, ou rend 0 ou plusieurs résultats"], ["<b>Entête</b>", "<code>FONCTION F (…) : Type</code>, terminée par <code>Retourner</code>", "<code>PROCEDURE P (…)</code>, sans Retourner"], ["<b>Appel</b>", "dans une expression : <code>x ← F(n)</code>", "seul sur sa ligne : <code>P(T, n)</code>"], ["<b>Python</b>", "<code>def f(…):</code> … <code>return x</code>", "<code>def p(…):</code> + <code>global n</code> pour un @ simple"]]}, {"t": "boxes", "items": [{"k": "coeur", "title": "paramètres", "html": "Appel et entête se correspondent par le <b>nombre</b>, l'<b>ordre</b> et le <b>type</b>. <b>Formels</b> : dans l'entête. <b>Effectifs</b> : dans l'appel.<br><b>Par valeur</b> <code>n : Entier</code> : le module utilise n. <b>Par adresse</b> <code>@n : Entier</code> : le module modifie n."}, {"k": "cours", "title": "le @ en Python", "html": "Méthode du cours : le paramètre <b>sort</b> de l'entête et devient <code>global n</code> dans le module. L'appel se fait sans lui : <code>saisir()</code>. Un tableau passé en paramètre est modifié directement."}, {"k": "coeur", "title": "global ou local", "html": "<b>Global</b> : déclaré dans le programme principal (T.D.O.G), connu partout. <b>Local</b> : déclaré dans un module (T.D.O.L), connu de lui seul."}, {"k": "piege", "title": "le T.D.O.L", "html": "Les paramètres ne se déclarent <b>pas</b> dans le T.D.O.L. Évite Lire et Ecrire dans une fonction : elle reçoit par ses paramètres et rend par Retourner."}]}, {"t": "table", "head": ["L'énoncé dit…", "Tu écris", "En Python"], "rows": [["« saisir n tel que… »", "<code>PROCEDURE Saisir (@n : Entier)</code>", "<code>global n</code>"], ["« calculer, compter, déterminer »", "<code>FONCTION F (…) : Entier</code>", "<code>return</code>"], ["« vérifier si…, tester si… »", "<code>FONCTION F (…) : Booléen</code>", "<code>return test</code>"], ["« remplir, trier » un tableau", "<code>PROCEDURE P (@T : Tab ; n : Entier)</code>", "t modifié sur place"], ["« afficher »", "<code>PROCEDURE P (T : Tab ; n : Entier)</code>", "<code>print</code>"]], "title": "Fonction ou procédure ?"}, {"t": "mod", "num": "M1", "title": "Saisir un entier n avec une fonction", "kind": "fonction → entier", "algo": "FONCTION Saisir () : Entier\nDEBUT\n    Ecrire(\"saisir un entier : \")\n    Lire(n)\n    Retourner n\nFIN\n# appel dans le pp\nn ← Saisir()", "py": "def saisir():\n    n = int(input(\"saisir un entier : \"))\n    return n\n\n# appel dans le pp\nn = saisir()", "td": [["n", "Entier"]]}, {"t": "mod", "num": "M1′", "title": "Saisir un entier n avec une procédure", "kind": "procédure · @n", "algo": "PROCEDURE Saisir (@n : Entier)\nDEBUT\n    Ecrire(\"saisir un entier : \")\n    Lire(n)\nFIN\n# appel dans le pp\nSaisir(n)", "py": "def saisir():\n    global n\n    n = int(input(\"saisir un entier : \"))\n\n# appel dans le pp\nsaisir()"}, {"t": "mod", "num": "M1″", "title": "Saisir un entier 1 ≤ n ≤ 10 avec une procédure", "kind": "procédure · contrôle", "note": "S'il y a une condition de saisie, il faut une boucle Répéter… Jusqu'à.", "algo": "PROCEDURE Saisir (@n : Entier)\nDEBUT\n    Répéter\n        Ecrire(\"saisir un entier : \")\n        Lire(n)\n    Jusqu'à (1 ≤ n) et (n ≤ 10)\nFIN\n# appel dans le pp\nSaisir(n)", "py": "def saisir():\n    global n\n    test = False\n    while test == False:\n        n = int(input(\"saisir un entier : \"))\n        if 1 <= n <= 10:\n            test = True\n\n# ou, plus court :\ndef saisir():\n    global n\n    n = int(input(\"saisir un entier : \"))\n    while not (1 <= n <= 10):\n        n = int(input(\"saisir un entier : \"))", "cons": "saisir un entier : 0\nsaisir un entier : 14\nsaisir un entier : 7"}], "quiz": [{"q": "Un module qui retourne <b>un seul</b> résultat simple est…", "o": ["une fonction", "une procédure", "un programme principal", "un T.D.O.L"], "why": "Une fonction rend un résultat par Retourner et s'appelle dans une expression.", "a": 0}, {"q": "Dans <code>PROCEDURE Saisir (@n : Entier)</code>, le @ veut dire…", "o": ["n est passé par adresse : le module le modifie", "n est passé par valeur", "n est un tableau", "n est un objet local"], "why": "Par adresse : la modification faite dans le module est visible dans le programme principal.", "a": 0}, {"q": "Avec la méthode du cours, le @n de Saisir devient en Python…", "o": ["global n dans le module, et l'appel saisir()", "def saisir(@n):", "return n obligatoirement", "n = None"], "why": "Le paramètre sort de l'entête et devient global n.", "a": 0}, {"q": "Où déclare-t-on les objets locaux d'un module ?", "o": ["dans son T.D.O.L", "dans le T.D.O.G", "dans le T.D.N.T", "dans son entête"], "why": "T.D.O.L = tableau de déclaration des objets <b>locaux</b>.", "a": 0}, {"q": "Les paramètres d'un module se déclarent-ils dans son T.D.O.L ?", "o": ["Non", "Oui"], "why": "Ils sont déjà déclarés dans l'entête, avec leur type.", "a": 0}, {"q": "Quel appel de la fonction F est correct ?", "o": ["x ← F(n)", "F(n) seul sur sa ligne", "F ← n", "Saisir F(n)"], "why": "Une fonction rend une valeur : on l'utilise dans une expression, par exemple une affectation.", "a": 0}, {"q": "« Vérifier si n est premier » : quel entête ?", "o": ["FONCTION Premier (n : Entier) : Booléen", "PROCEDURE Premier (@n : Entier)", "FONCTION Premier (n : Entier) : Entier", "PROCEDURE Premier (n : Entier)"], "why": "Vérifier rend Vrai ou Faux : une fonction de type Booléen. n n'est pas modifié : pas de @.", "a": 0}, {"q": "Les paramètres <b>effectifs</b> se trouvent…", "o": ["dans l'appel", "dans l'entête", "dans le T.D.O.L", "dans le T.D.N.T"], "why": "Formels : dans l'entête. Effectifs : dans l'appel.", "a": 0}, {"q": "« Afficher un tableau T de taille n » : quel entête ?", "o": ["PROCEDURE Afficher (T : Tab ; n : Entier)", "PROCEDURE Afficher (@T : Tab ; n : Entier)", "FONCTION Afficher (T : Tab) : Tab", "FONCTION Afficher (n : Entier) : Chaîne"], "why": "Afficher ne modifie pas T : pas de @. Il ne rend rien : procédure.", "a": 0}, {"q": "Que fait Python avec <code>def saisir(n):</code> suivi de <code>global n</code> ?", "o": ["Il refuse : n ne peut pas être à la fois paramètre et global", "Il fonctionne normalement", "Il ignore global", "Il crée deux variables n"], "why": "SyntaxError : name 'n' is parameter and global. Avec global, n sort de l'entête.", "a": 0}], "fill": [{"title": "M1″ en Python : saisir 1 ≤ n ≤ 10", "lang": "py", "src": "def saisir():\n    [[global]] n\n    n = int(input(\"saisir un entier : \"))\n    while [[not]] (1 <= n <= 10):\n        n = int(input(\"saisir un entier : \"))\n\n# appel dans le pp\n[[saisir()]]"}, {"title": "M1 en algorithme : saisir avec une fonction", "lang": "algo", "src": "[[FONCTION]] Saisir () : [[Entier]]\nDEBUT\n    Ecrire(\"saisir un entier : \")\n    Lire(n)\n    [[Retourner]] n\nFIN\n# appel dans le pp\nn [[←]] Saisir()"}], "trace": [{"title": "Qu'affiche ce programme ?", "lang": "py", "src": "def f(a, b):\n    return a * 2 + b\n\nx = f(3, 1)\nprint(f(x, x))", "ans": "21", "why": "x = 3 × 2 + 1 = 7, puis f(7, 7) = 14 + 7 = 21."}, {"title": "Qu'affiche ce programme ?", "lang": "py", "src": "def g():\n    global n\n    n = n + 5\n\nn = 10\ng()\ng()\nprint(n)", "ans": "20", "why": "Grâce à global, chaque appel modifie le n du programme principal : 10, 15, 20."}], "parsons": [{"title": "Remets dans l'ordre : M1″ en algorithme", "lang": "algo", "lines": ["PROCEDURE Saisir (@n : Entier)", "DEBUT", "    Répéter", "        Ecrire(\"saisir un entier : \")", "        Lire(n)", "    Jusqu'à (1 ≤ n) et (n ≤ 10)", "FIN"]}]}, {"id": "entiers", "n": 4, "title": "Modules utiles sur les entiers", "short": "Entiers", "goal": "Savoir écrire de mémoire M2 à M7 : puissance, factoriel, diviseurs, plus grand chiffre, chiffres triés, premier.", "lesson": [{"t": "boxes", "items": [{"k": "coeur", "title": "deux patrons", "html": "<b>Accumuler</b> avec Pour : on initialise (0 pour une somme ou un compteur, 1 pour un produit), puis on met à jour à chaque tour.<br><b>Vérifier</b> avec Tant que : on avance tant que tout va bien, puis on regarde <b>où</b> on s'est arrêté."}]}, {"t": "mod", "num": "M2", "title": "Calculer a<sup>b</sup>", "kind": "fonction → entier", "algo": "FONCTION Puissance (a, b : Entier) : Entier\nDEBUT\n    p ← 1\n    Pour i de 1 à b Faire\n        p ← p * a\n    FinPour\n    Retourner p\nFIN", "py": "def puissance(a, b):\n    p = 1\n    for i in range(1, b + 1):  # ou range(b)\n        p = p * a\n    return p", "td": [["p", "Entier"], ["i", "Entier"]], "cons": ">>> puissance(2, 10)\n1024"}, {"t": "mod", "num": "M3", "title": "Calculer n! = 1 × 2 × … × n", "kind": "fonction → entier", "algo": "FONCTION Factoriel (n : Entier) : Entier\nDEBUT\n    f ← 1\n    Pour i de 2 à n Faire\n        f ← f * i\n    FinPour\n    Retourner f\nFIN", "py": "def factoriel(n):\n    f = 1\n    for i in range(2, n + 1):\n        f = f * i\n    return f", "td": [["f", "Entier"], ["i", "Entier"]], "cons": ">>> factoriel(5)\n120"}, {"t": "mod", "num": "M4", "title": "Compter les diviseurs de n", "kind": "fonction → entier", "algo": "FONCTION Nbr_div (n : Entier) : Entier\nDEBUT\n    nb ← 0\n    Pour i de 1 à n Faire\n        Si n mod i = 0 Alors\n            nb ← nb + 1\n        FinSi\n    FinPour\n    Retourner nb\nFIN", "py": "def nbr_div(n):\n    nb = 0\n    for i in range(1, n + 1):\n        if n % i == 0:\n            nb = nb + 1   # ou nb += 1\n    return nb", "td": [["nb", "Entier"], ["i", "Entier"]], "cons": ">>> nbr_div(12)   # 1 2 3 4 6 12\n6"}, {"t": "mod", "num": "M5", "title": "Le plus grand chiffre de n", "kind": "fonction → entier", "algo": "FONCTION Max (n : Entier) : Entier\nDEBUT\n    ch ← convch(n)\n    M ← ch[0]\n    Pour i de 1 à long(ch) - 1 Faire\n        Si ch[i] > M Alors\n            M ← ch[i]\n        FinSi\n    FinPour\n    Retourner valeur(M)\nFIN", "py": "def max_chiffre(n):\n    ch = str(n)\n    M = ch[0]\n    for i in range(1, len(ch)):\n        if ch[i] > M:\n            M = ch[i]\n    return int(M)", "td": [["M", "Caractère"], ["i", "Entier"], ["ch", "Chaîne"]], "cons": ">>> max_chiffre(4728)\n8", "note": "Le cours l'appelle max : en Python ce nom écrase la fonction max() déjà existante, d'où max_chiffre."}, {"t": "mod", "num": "M6", "title": "Les chiffres de a sont-ils triés par ordre croissant ?", "kind": "fonction → booléen", "algo": "FONCTION Verif_Trier (a : Entier) : Booléen\nDEBUT\n    ch ← convch(a)\n    i ← 0\n    Tantque (i < long(ch) - 1) et (ch[i] ≤ ch[i + 1]) Faire\n        i ← i + 1\n    FinTantque\n    Retourner i = long(ch) - 1\nFIN", "py": "def verif_trier(a):\n    ch = str(a)\n    i = 0\n    while i < len(ch) - 1 and ch[i] <= ch[i + 1]:\n        i = i + 1\n    return i == len(ch) - 1", "td": [["i", "Entier"], ["ch", "Chaîne"]], "cons": ">>> verif_trier(1337)\nTrue\n>>> verif_trier(1324)\nFalse"}, {"t": "mod", "num": "M7", "title": "n (n > 1) est-il premier ?", "kind": "fonction → booléen", "algo": "FONCTION Verif_premier (n : Entier) : Booléen\nDEBUT\n    K ← Vrai\n    i ← 2\n    Tantque K et (i ≤ n div 2) Faire\n        Si n mod i ≠ 0 Alors\n            i ← i + 1\n        Sinon\n            K ← Faux\n        FinSi\n    FinTantque\n    Retourner K\nFIN", "py": "def verif_premier(n):\n    k = True\n    i = 2\n    while i <= n // 2 and k:\n        if n % i != 0:\n            i = i + 1\n        else:\n            k = False\n    return k", "td": [["i", "Entier"], ["K", "Booléen"]], "cons": ">>> verif_premier(13)\nTrue"}, {"t": "pair", "title": "M7 · version 2", "sub": "sans variable booléenne", "algo": "i ← 2\nTantque (i ≤ n div 2) et (n mod i ≠ 0) Faire\n    i ← i + 1\nFinTantque\nRetourner i > n div 2", "py": "i = 2\nwhile i <= n // 2 and n % i != 0:\n    i = i + 1\nreturn i > n // 2"}, {"t": "pair", "title": "M7 · version 3", "sub": "en comptant les diviseurs, idée du M4", "algo": "Nb ← 0\nPour i de 1 à n Faire\n    Si n mod i = 0 Alors\n        Nb ← Nb + 1\n    FinSi\nFinPour\nRetourner Nb = 2", "py": "nb = 0\nfor i in range(1, n + 1):\n    if n % i == 0:\n        nb += 1\nreturn nb == 2"}, {"t": "boxes", "items": [{"k": "piege", "title": "M7 et le nombre 1", "html": "Le M7 suppose <b>n &gt; 1</b> : pour 0 et 1 la boucle ne tourne pas et il répond Vrai. Si l'énoncé ne le garantit pas, démarre avec <code>K ← (n ≥ 2)</code>. La version 3 répond juste pour tout n ≥ 1."}, {"k": "piege", "title": "M5 compare des caractères", "html": "<code>\"7\" &gt; \"4\"</code> marche car les chiffres se suivent dans le code ASCII. N'oublie pas <code>valeur(M)</code> à la fin pour rendre un entier."}]}], "quiz": [{"q": "Que retourne <code>puissance(3, 0)</code> ?", "o": ["1", "0", "3", "une erreur"], "why": "La boucle ne tourne pas : p garde sa valeur de départ, 1. Et a⁰ = 1.", "a": 0}, {"q": "Dans Factoriel, pourquoi la boucle commence-t-elle à 2 ?", "o": ["Multiplier par 1 ne change rien", "Sinon Python plante", "Parce que 0! = 0", "range l'exige"], "why": "f vaut déjà 1 : le tour i = 1 ne servirait à rien.", "a": 0}, {"q": "Que retourne <code>nbr_div(12)</code> ?", "o": ["6", "4", "5", "12"], "why": "1, 2, 3, 4, 6, 12 : six diviseurs.", "a": 0}, {"q": "Un nombre premier a exactement…", "o": ["2 diviseurs", "1 diviseur", "aucun diviseur", "n div 2 diviseurs"], "why": "1 et lui-même. C'est l'idée de la version 3 : <code>Retourner Nb = 2</code>.", "a": 0}, {"q": "Dans le M7, pourquoi chercher un diviseur seulement jusqu'à n div 2 ?", "o": ["Aucun diviseur de n autre que n ne dépasse n div 2", "Pour aller deux fois plus vite, même si c'est faux", "Parce que n est pair", "Parce que range l'impose"], "why": "Le plus petit diviseur différent de 1 est au moins 2, donc le plus grand diviseur strict est au plus n div 2.", "a": 0}, {"q": "Que répond la version K du M7 pour n = 1 ?", "o": ["Vrai, alors que 1 n'est pas premier", "Faux", "Une erreur", "Elle boucle à l'infini"], "why": "i = 2 > 1 div 2 = 0 : la boucle ne tourne pas et K reste Vrai. D'où la condition n > 1.", "a": 0}, {"q": "Dans le M5, quel est le type de M ?", "o": ["Caractère", "Entier", "Booléen", "Tableau"], "why": "M reçoit ch[0], un caractère. On le convertit avec valeur(M) à la fin.", "a": 0}, {"q": "Que retourne <code>verif_trier(1223)</code> ?", "o": ["True", "False"], "why": "Le test est ≤ : deux chiffres égaux qui se suivent sont acceptés.", "a": 0}, {"q": "Version 2 du M7 : pourquoi <code>Retourner i > n div 2</code> ?", "o": ["Si i a dépassé n div 2, aucun diviseur n'a arrêté la boucle", "Pour retourner le plus grand diviseur", "Parce que i est toujours pair", "C'est une erreur du cours"], "why": "La boucle s'arrête soit en trouvant un diviseur (i ≤ n div 2), soit en allant au bout (i > n div 2).", "a": 0}], "fill": [{"title": "M4 en Python", "lang": "py", "src": "def nbr_div(n):\n    nb = [[0]]\n    for i in range(1, [[n + 1|n+1]]):\n        if n [[%]] i == 0:\n            nb = nb + 1\n    [[return]] nb"}, {"title": "M7 version 2 en algorithme", "lang": "algo", "src": "i ← [[2]]\nTantque (i ≤ n [[div]] 2) [[et]] (n mod i ≠ 0) Faire\n    i ← i + 1\nFinTantque\nRetourner i [[>]] n div 2"}, {"title": "M2 en algorithme", "lang": "algo", "src": "FONCTION Puissance (a, b : Entier) : Entier\nDEBUT\n    p ← [[1]]\n    Pour i de 1 à [[b]] Faire\n        p ← [[p * a|p*a|a * p|a*p]]\n    FinPour\n    Retourner [[p]]\nFIN"}], "trace": [{"title": "Que retourne Max(50719) ?", "lang": "algo", "src": "ch ← convch(50719)\nM ← ch[0]\nPour i de 1 à long(ch) - 1 Faire\n    Si ch[i] > M Alors\n        M ← ch[i]\n    FinSi\nFinPour\nRetourner valeur(M)", "py": "ch = str(50719)\nM = ch[0]\nfor i in range(1, len(ch)):\n    if ch[i] > M:\n        M = ch[i]\nprint(int(M))", "ans": "9", "why": "M passe de 5 à 7, puis à 9."}, {"title": "Que retourne Nbr_div(16) ?", "lang": "py", "src": "def nbr_div(n):\n    nb = 0\n    for i in range(1, n + 1):\n        if n % i == 0:\n            nb = nb + 1\n    return nb\n\nprint(nbr_div(16))", "ans": "5", "why": "1, 2, 4, 8, 16."}, {"title": "Qu'affiche ce programme ?", "lang": "py", "src": "def puissance(a, b):\n    p = 1\n    for i in range(b):\n        p = p * a\n    return p\n\nprint(puissance(2, 5), puissance(5, 2))", "ans": "32 25", "why": "2⁵ = 32 et 5² = 25."}, {"title": "Combien de tours fait la boucle pour n = 15 ?", "lang": "algo", "src": "i ← 2\nTantque (i ≤ n div 2) et (n mod i ≠ 0) Faire\n    i ← i + 1\nFinTantque", "py": "n = 15\ni = 2\nt = 0\nwhile i <= n // 2 and n % i != 0:\n    i = i + 1\n    t = t + 1\nprint(t)", "ans": "1", "why": "i = 2 : 15 mod 2 ≠ 0, on fait un tour, i = 3. 15 mod 3 = 0 : on s'arrête. 15 n'est pas premier."}], "parsons": [{"title": "Remets dans l'ordre : M3 Factoriel en Python", "lang": "py", "lines": ["def factoriel(n):", "    f = 1", "    for i in range(2, n + 1):", "        f = f * i", "    return f"]}, {"title": "Remets dans l'ordre : M6 en algorithme", "lang": "algo", "lines": ["FONCTION Verif_Trier (a : Entier) : Booléen", "DEBUT", "    ch ← convch(a)", "    i ← 0", "    Tantque (i < long(ch) - 1) et (ch[i] ≤ ch[i + 1]) Faire", "        i ← i + 1", "    FinTantque", "    Retourner i = long(ch) - 1", "FIN"]}]}, {"id": "arithmetique", "n": 5, "title": "La boîte à outils arithmétique", "short": "Arithmétique", "goal": "Somme des diviseurs, inverse, PGCD, facteurs premiers, somme des chiffres, et tout ce qu'on construit avec.", "lesson": [{"t": "mod", "num": "A", "title": "Somme des diviseurs stricts", "kind": "fonction → entier", "algo": "FONCTION SommeDiv (n : Entier) : Entier\nDEBUT\n    s ← 0\n    Pour d de 1 à n div 2 Faire\n        Si n mod d = 0 Alors\n            s ← s + d\n        FinSi\n    FinPour\n    Retourner s\nFIN", "py": "def somme_div(n):\n    s = 0\n    for d in range(1, n // 2 + 1):\n        if n % d == 0:\n            s = s + d\n    return s", "cons": ">>> somme_div(28)\n28", "td": [["s", "Entier"], ["d", "Entier"]]}, {"t": "mod", "num": "B", "title": "Inverser un entier", "kind": "fonction → entier", "algo": "FONCTION Inverse (x : Entier) : Entier\nDEBUT\n    s ← 0\n    Tantque x ≠ 0 Faire\n        r ← x mod 10\n        s ← s * 10 + r\n        x ← x div 10\n    FinTantque\n    Retourner s\nFIN", "py": "def inverse_nb(x):\n    s = 0\n    while x != 0:\n        r = x % 10\n        s = s * 10 + r\n        x = x // 10\n    return s", "cons": ">>> inverse_nb(472)\n274", "td": [["s", "Entier"], ["r", "Entier"]]}, {"t": "mod", "num": "C", "title": "PGCD (algorithme d'Euclide)", "kind": "fonction → entier", "algo": "FONCTION Pgcd (a, b : Entier) : Entier\nDEBUT\n    Tantque b ≠ 0 Faire\n        r ← a mod b\n        a ← b\n        b ← r\n    FinTantque\n    Retourner a\nFIN", "py": "def pgcd(a, b):\n    while b != 0:\n        r = a % b\n        a = b\n        b = r\n    return a", "cons": ">>> pgcd(84, 36)\n12", "td": [["r", "Entier"]]}, {"t": "mod", "num": "D", "title": "Facteurs premiers : 12 donne 2*2*3", "kind": "fonction → chaîne", "algo": "FONCTION Facteurs (n : Entier) : Chaîne\nDEBUT\n    ch ← \"\"\n    d ← 2\n    Tantque n ≠ 1 Faire\n        Si n mod d = 0 Alors\n            ch ← ch + convch(d) + \"*\"\n            n ← n div d\n        Sinon\n            d ← d + 1\n        FinSi\n    FinTantque\n    Retourner sous_chaîne(ch, 0, long(ch) - 1)\nFIN", "py": "def facteurs(n):\n    ch = \"\"\n    d = 2\n    while n != 1:\n        if n % d == 0:\n            ch = ch + str(d) + \"*\"\n            n = n // d\n        else:\n            d = d + 1\n    return ch[0:len(ch) - 1]", "cons": ">>> facteurs(12)\n'2*2*3'", "td": [["ch", "Chaîne"], ["d", "Entier"]]}, {"t": "mod", "num": "E", "title": "Somme des chiffres", "kind": "fonction → entier", "note": "Même boucle que l'inverse (B) : on ajoute le chiffre au lieu de le coller.", "algo": "FONCTION SomChiffres (x : Entier) : Entier\nDEBUT\n    s ← 0\n    Tantque x ≠ 0 Faire\n        s ← s + x mod 10\n        x ← x div 10\n    FinTantque\n    Retourner s\nFIN", "py": "def som_chiffres(x):\n    s = 0\n    while x != 0:\n        s = s + x % 10\n        x = x // 10\n    return s", "cons": ">>> som_chiffres(472)\n13"}, {"t": "table", "head": ["Avec ces outils…", "On écrit"], "rows": [["nombre parfait", "<code>SommeDiv(n) = n</code>"], ["nombres amis", "<code>(SommeDiv(a) = b) et (SommeDiv(b) = a)</code>"], ["PPCM", "<code>(a * b) div Pgcd(a, b)</code>"], ["entier symétrique", "<code>x = Inverse(x)</code>"], ["premiers entre eux", "<code>Pgcd(a, b) = 1</code>"]]}, {"t": "boxes", "items": [{"k": "coeur", "title": "le trio des chiffres", "html": "<code>n mod 10</code> lit le dernier chiffre, <code>n div 10</code> le retire, <code>s * 10 + r</code> le colle à droite."}, {"k": "astuce", "title": "n div 2", "html": "Pour SommeDiv, s'arrêter à <b>n div 2</b> suffit : aucun diviseur strict n'est plus grand. Même idée que le M7."}]}], "quiz": [{"q": "<code>SommeDiv(6)</code> vaut 1 + 2 + 3 = 6. On dit que 6 est…", "o": ["parfait", "premier", "symétrique", "ami"], "why": "Un nombre parfait est égal à la somme de ses diviseurs stricts.", "a": 0}, {"q": "Que vaut <code>Pgcd(84, 36)</code> ?", "o": ["12", "6", "4", "36"], "why": "84 mod 36 = 12, puis 36 mod 12 = 0 : le PGCD est 12.", "a": 0}, {"q": "Comment calcule-t-on le PPCM de a et b ?", "o": ["(a * b) div Pgcd(a, b)", "a * b", "Pgcd(a, b) * 2", "a + b - Pgcd(a, b)"], "why": "a × b = PGCD × PPCM.", "a": 0}, {"q": "Que retourne <code>Inverse(120)</code> ?", "o": ["21", "021", "12", "210"], "why": "s prend 0, puis 2, puis 21. Un entier n'a pas de zéro à gauche.", "a": 0}, {"q": "Que retourne <code>Facteurs(18)</code> ?", "o": ["\"2*3*3\"", "\"2*9\"", "\"3*3*2\"", "\"2*3*3*\""], "why": "18 = 2 × 9 = 2 × 3 × 3. La dernière étoile est retirée par sous_chaîne.", "a": 0}, {"q": "Dans Inverse, quelle instruction colle le chiffre r à droite de s ?", "o": ["s ← s * 10 + r", "s ← s + r", "s ← r * 10 + s", "s ← s div 10"], "why": "Multiplier par 10 décale s d'un rang vers la gauche et libère les unités pour r.", "a": 0}, {"q": "220 et 284 sont amis. Quel test le vérifie ?", "o": ["(SommeDiv(a) = b) et (SommeDiv(b) = a)", "SommeDiv(a) = SommeDiv(b)", "Pgcd(a, b) = 1", "a + b = SommeDiv(a + b)"], "why": "SommeDiv(220) = 284 et SommeDiv(284) = 220.", "a": 0}, {"q": "Dans Pgcd, la boucle tourne tant que…", "o": ["b ≠ 0", "a ≠ 0", "a ≠ b", "r = 0"], "why": "Quand le reste devient 0, b vaut 0 et le PGCD est dans a.", "a": 0}, {"q": "Comment tester qu'un entier x est symétrique (comme 1221) ?", "o": ["x = Inverse(x)", "x mod 10 = x div 10", "SommeDiv(x) = x", "Pgcd(x, 10) = 1"], "why": "Un entier symétrique se lit pareil dans les deux sens : il est égal à son inverse.", "a": 0}], "fill": [{"title": "C · PGCD en Python", "lang": "py", "src": "def pgcd(a, b):\n    while b [[!=]] 0:\n        r = a [[%]] b\n        a = [[b]]\n        b = [[r]]\n    return [[a]]"}, {"title": "B · Inverse en algorithme", "lang": "algo", "src": "s ← 0\nTantque x [[≠]] 0 Faire\n    r ← x [[mod]] 10\n    s ← [[s * 10 + r|s*10+r]]\n    x ← x [[div]] 10\nFinTantque\nRetourner s"}], "trace": [{"title": "Que retourne Pgcd(48, 18) ?", "lang": "algo", "src": "Tantque b ≠ 0 Faire\n    r ← a mod b\n    a ← b\n    b ← r\nFinTantque\nRetourner a", "py": "a, b = 48, 18\nwhile b != 0:\n    r = a % b\n    a = b\n    b = r\nprint(a)", "ans": "6", "why": "(48, 18) → (18, 12) → (12, 6) → (6, 0) : le PGCD est 6."}, {"title": "Que retourne Inverse(9010) ?", "lang": "py", "src": "def inverse_nb(x):\n    s = 0\n    while x != 0:\n        s = s * 10 + x % 10\n        x = x // 10\n    return s\n\nprint(inverse_nb(9010))", "ans": "109", "why": "s prend 0, 1, 10, 109. Le zéro de tête de 0109 disparaît."}, {"title": "Que retourne SomChiffres(9999) ?", "lang": "py", "src": "def som_chiffres(x):\n    s = 0\n    while x != 0:\n        s = s + x % 10\n        x = x // 10\n    return s\n\nprint(som_chiffres(9999))", "ans": "36", "why": "9 + 9 + 9 + 9."}, {"title": "Que retourne SommeDiv(12) ?", "lang": "py", "src": "def somme_div(n):\n    s = 0\n    for d in range(1, n // 2 + 1):\n        if n % d == 0:\n            s = s + d\n    return s\n\nprint(somme_div(12))", "ans": "16", "why": "1 + 2 + 3 + 4 + 6 = 16. 12 n'est pas parfait."}], "parsons": [{"title": "Remets dans l'ordre : B · Inverse en algorithme", "lang": "algo", "lines": ["FONCTION Inverse (x : Entier) : Entier", "DEBUT", "    s ← 0", "    Tantque x ≠ 0 Faire", "        r ← x mod 10", "        s ← s * 10 + r", "        x ← x div 10", "    FinTantque", "    Retourner s", "FIN"]}]}, {"id": "chaines", "n": 6, "title": "Caractères et chaînes", "short": "Chaînes", "goal": "Parcourir une chaîne pour compter, construire ou vérifier : M8 à M13.", "lesson": [{"t": "table", "head": ["Schéma", "Boucle", "Avant", "Dans la boucle", "Modules"], "rows": [["<b>Compter</b>", "Pour", "<code>nb ← 0</code>", "<code>Si … Alors nb ← nb + 1</code>", "M9, M10"], ["<b>Construire</b>", "Pour", "<code>ch1 ← \"\"</code>", "<code>ch1 ← ch[i] + ch1</code> pour inverser", "M11"], ["<b>Vérifier</b>", "Tant que", "<code>i ← 0</code>", "on avance tant que tout va bien", "M12, M13"]]}, {"t": "mod", "num": "M8", "title": "Nature d'un caractère c", "kind": "fonction → chaîne", "algo": "FONCTION Nature (c : Caractère) : Chaîne\nDEBUT\n    Si \"A\" ≤ c ≤ \"Z\" Alors\n        R ← \"majuscule\"\n    Sinon Si \"a\" ≤ c ≤ \"z\" Alors\n        R ← \"minuscule\"\n    Sinon Si \"0\" ≤ c ≤ \"9\" Alors\n        R ← \"chiffre\"\n    Sinon\n        R ← \"autre\"\n    FinSi\n    Retourner R\nFIN", "py": "def nature(c):\n    if \"A\" <= c <= \"Z\":\n        R = \"majuscule\"\n    elif \"a\" <= c <= \"z\":\n        R = \"minuscule\"\n    elif \"0\" <= c <= \"9\":\n        R = \"chiffre\"\n    else:\n        R = \"autre\"\n    return R", "td": [["R", "Chaîne"]], "cons": ">>> nature(\"g\")\n'minuscule'"}, {"t": "mod", "num": "M9", "title": "Nombre d'apparitions de c dans ch", "kind": "fonction → entier", "algo": "FONCTION Occurrence (c : Caractère ; ch : Chaîne) : Entier\nDEBUT\n    nb ← 0\n    Pour i de 0 à long(ch) - 1 Faire\n        Si ch[i] = c Alors\n            nb ← nb + 1\n        FinSi\n    FinPour\n    Retourner nb\nFIN", "py": "def occurrence(c, ch):\n    nb = 0\n    for i in range(len(ch)):\n        if ch[i] == c:\n            nb = nb + 1\n    return nb", "td": [["nb", "Entier"], ["i", "Entier"]], "cons": ">>> occurrence(\"a\", \"banana\")\n3"}, {"t": "mod", "num": "M10", "title": "Nombre de lettres dans ch", "kind": "fonction → entier", "note": "Le poly type ce module en chaîne : il retourne un nombre, c'est donc un Entier.", "algo": "FONCTION Alphabets (ch : Chaîne) : Entier\nDEBUT\n    nb ← 0\n    Pour i de 0 à long(ch) - 1 Faire\n        Si \"A\" ≤ majus(ch[i]) ≤ \"Z\" Alors\n            nb ← nb + 1\n        FinSi\n    FinPour\n    Retourner nb\nFIN", "py": "def alphabets(ch):\n    nb = 0\n    for i in range(len(ch)):\n        if \"A\" <= ch[i].upper() <= \"Z\":\n            nb = nb + 1\n    return nb", "td": [["nb", "Entier"], ["i", "Entier"]], "cons": ">>> alphabets(\"Bac 2027 !\")\n3"}, {"t": "mod", "num": "M11", "title": "L'inverse d'une chaîne", "kind": "fonction → chaîne", "algo": "FONCTION Inverse (ch : Chaîne) : Chaîne\nDEBUT\n    ch1 ← \"\"\n    Pour i de 0 à long(ch) - 1 Faire\n        ch1 ← ch[i] + ch1\n    FinPour\n    Retourner ch1\nFIN\n\n# version 2\nch1 ← \"\"\nPour i de long(ch) - 1 à 0 (Pas = -1) Faire\n    ch1 ← ch1 + ch[i]\nFinPour", "py": "def inverse(ch):\n    ch1 = \"\"\n    for i in range(len(ch)):\n        ch1 = ch[i] + ch1\n    return ch1\n\n# version 2\nch1 = \"\"\nfor i in range(len(ch) - 1, -1, -1):\n    ch1 = ch1 + ch[i]", "td": [["ch1", "Chaîne"], ["i", "Entier"]], "cons": ">>> inverse(\"bac\")\n'cab'"}, {"t": "mod", "num": "M12", "title": "Uniquement des lettres et des espaces ?", "kind": "fonction → booléen", "algo": "FONCTION Verif (ch : Chaîne) : Booléen\nDEBUT\n    i ← 0\n    Tantque (i < long(ch)) et\n        ((\"A\" ≤ majus(ch[i]) ≤ \"Z\") ou (ch[i] = \" \")) Faire\n        i ← i + 1\n    FinTantque\n    Retourner i = long(ch)\nFIN", "py": "def verif(ch):\n    i = 0\n    while i < len(ch) and (\"A\" <= ch[i].upper() <= \"Z\"\n                           or ch[i] == \" \"):\n        i = i + 1\n    return i == len(ch)", "td": [["i", "Entier"]], "cons": ">>> verif(\"Bac info\")\nTrue\n>>> verif(\"Bac 2027\")\nFalse"}, {"t": "mod", "num": "M13", "title": "ch est-elle un palindrome ? (elle, ici, radar)", "kind": "fonction → booléen", "algo": "FONCTION Palindrome (ch : Chaîne) : Booléen\nDEBUT\n    i ← 0\n    j ← long(ch) - 1\n    Répéter\n        K ← ch[i] = ch[j]\n        i ← i + 1\n        j ← j - 1\n    Jusqu'à (i ≥ j) ou (K = Faux)\n    Retourner K\nFIN", "py": "def palindrome(ch):\n    i = 0\n    j = len(ch) - 1\n    k = True\n    while i < j and k == True:\n        k = ch[i] == ch[j]\n        i = i + 1\n        j = j - 1\n    return k", "td": [["i, j", "Entier"], ["K", "Booléen"]], "cons": ">>> palindrome(\"radar\")\nTrue"}, {"t": "pair", "title": "M13 · version 2", "sub": "deux compteurs, sans booléen", "algo": "i ← 0\nj ← long(ch) - 1\nTantque (i < j) et (ch[i] = ch[j]) Faire\n    i ← i + 1\n    j ← j - 1\nFinTantque\nRetourner i ≥ j", "py": "i = 0\nj = len(ch) - 1\nwhile i < j and ch[i] == ch[j]:\n    i = i + 1\n    j = j - 1\nreturn i >= j"}, {"t": "pair", "title": "M13 · version 3", "sub": "un seul compteur", "algo": "i ← 0\nRépéter\n    K ← ch[i] = ch[long(ch) - 1 - i]\n    i ← i + 1\nJusqu'à (K = Faux) ou (i = long(ch) div 2)", "py": "i = 0\nn = len(ch)\nwhile i < n // 2 and ch[i] == ch[n - 1 - i]:\n    i = i + 1\nreturn i == n // 2"}, {"t": "boxes", "items": [{"k": "coeur", "title": "le miroir", "html": "Le caractère en face de <code>ch[i]</code> est <code>ch[long(ch) - 1 - i]</code>. On s'arrête au milieu : <code>long(ch) div 2</code> comparaisons suffisent."}, {"k": "coeur", "title": "les parenthèses du M12", "html": "Le <b>ou</b> est entre parenthèses : sans elles, <b>et</b> passe avant <b>ou</b> et le test change de sens."}, {"k": "piege", "title": "les accents", "html": "<code>\"é\"</code> n'est pas entre \"a\" et \"z\" : Nature(\"é\") donne <b>autre</b>."}]}], "quiz": [{"q": "Que retourne <code>Nature(\"é\")</code> ?", "o": ["\"autre\"", "\"minuscule\"", "\"majuscule\"", "\"chiffre\""], "why": "Le code de é est bien plus grand que celui de z : aucun des trois tests n'est vrai.", "a": 0}, {"q": "Que vaut <code>Occurrence(\"s\", \"assises\")</code> ?", "o": ["4", "3", "5", "2"], "why": "a-<b>s</b>-<b>s</b>-i-<b>s</b>-e-<b>s</b> : quatre s.", "a": 0}, {"q": "On parcourt ch de 0 à long(ch) - 1. Quelle instruction construit l'inverse ?", "o": ["ch1 ← ch[i] + ch1", "ch1 ← ch1 + ch[i]", "ch1 ← ch[i]", "ch1 ← ch1 + ch1"], "why": "On colle chaque nouveau caractère <b>devant</b> : le premier lu finit en dernier.", "a": 0}, {"q": "Que retourne <code>Verif(\"Bac 2027\")</code> (M12) ?", "o": ["Faux", "Vrai"], "why": "Le caractère \"2\" n'est ni une lettre ni un espace : la boucle s'arrête avant la fin.", "a": 0}, {"q": "Dans le M12, pourquoi des parenthèses autour du <b>ou</b> ?", "o": ["Parce que et passe avant ou", "Pour faire joli", "Parce que Python l'exige toujours", "Parce que ou passe avant et"], "why": "Sans elles, on calculerait (i < long(ch) et lettre) ou espace : un espace serait testé même après la fin.", "a": 0}, {"q": "Dans un palindrome, quel caractère est en face de <code>ch[i]</code> ?", "o": ["ch[long(ch) - 1 - i]", "ch[long(ch) - i]", "ch[i - 1]", "ch[long(ch) div 2]"], "why": "Pour i = 0, on veut le dernier : ch[long(ch) - 1].", "a": 0}, {"q": "Combien de comparaisons la version 3 du M13 fait-elle pour \"radar\" ?", "o": ["2", "5", "3", "4"], "why": "long(\"radar\") div 2 = 2 : r/r puis a/a. Le d du milieu n'a pas de partenaire.", "a": 0}, {"q": "Quel est le bon type de retour du M10 Alphabets ?", "o": ["Entier", "Chaîne", "Booléen", "Caractère"], "why": "Il compte des lettres : il rend un nombre. Le poly a une coquille.", "a": 0}, {"q": "En Python, <code>\"a\" < \"B\"</code> vaut…", "o": ["False", "True"], "why": "On compare les codes : \"a\" = 97 et \"B\" = 66. D'où majus(c) pour comparer sans tenir compte de la casse.", "a": 0}], "fill": [{"title": "M9 · Occurrence en Python", "lang": "py", "src": "def occurrence(c, ch):\n    nb = 0\n    for i in range([[len(ch)]]):\n        if ch[i] [[==]] c:\n            nb = nb + 1\n    return nb"}, {"title": "M13 version 2 en algorithme", "lang": "algo", "src": "i ← 0\nj ← [[long(ch) - 1|long(ch)-1]]\nTantque (i < j) et (ch[i] [[=]] ch[j]) Faire\n    i ← i + 1\n    j ← [[j - 1|j-1]]\nFinTantque\nRetourner i [[≥]] j"}, {"title": "M12 en Python", "lang": "py", "src": "def verif(ch):\n    i = 0\n    while i < len(ch) and (\"A\" <= ch[i].[[upper()]] <= \"Z\"\n                           [[or]] ch[i] == \" \"):\n        i = i + 1\n    return i [[==]] len(ch)"}], "trace": [{"title": "Que retourne Inverse(\"info\") ?", "lang": "algo", "src": "ch1 ← \"\"\nPour i de 0 à long(ch) - 1 Faire\n    ch1 ← ch[i] + ch1\nFinPour\nRetourner ch1", "py": "ch = \"info\"\nch1 = \"\"\nfor i in range(len(ch)):\n    ch1 = ch[i] + ch1\nprint(ch1)", "ans": "ofni", "why": "i, ni, fni, ofni."}, {"title": "Qu'affiche ce programme ?", "lang": "py", "src": "ch = \"Bac 2027 !\"\nnb = 0\nfor i in range(len(ch)):\n    if \"0\" <= ch[i] <= \"9\":\n        nb = nb + 1\nprint(nb)", "ans": "4", "why": "Les chiffres 2, 0, 2, 7."}, {"title": "Qu'affiche ce programme ?", "lang": "py", "src": "ch = \"elle\"\ni = 0\nj = len(ch) - 1\nwhile i < j and ch[i] == ch[j]:\n    i = i + 1\n    j = j - 1\nprint(i, j, i >= j)", "ans": "2 1 True", "why": "(0, 3) e = e, puis (1, 2) l = l, puis i = 2, j = 1 : i < j est faux, on sort. elle est un palindrome."}, {"title": "Qu'affiche ce programme ?", "lang": "py", "src": "ch = \"Bonjour\"\nnb = 0\nfor i in range(len(ch)):\n    if ch[i].upper() in {\"A\", \"E\", \"I\", \"O\", \"U\", \"Y\"}:\n        nb = nb + 1\nprint(nb)", "ans": "3", "why": "o, o, u : trois voyelles."}], "parsons": [{"title": "Remets dans l'ordre : M13 version 2 en Python", "lang": "py", "lines": ["def palindrome(ch):", "    i = 0", "    j = len(ch) - 1", "    while i < j and ch[i] == ch[j]:", "        i = i + 1", "        j = j - 1", "    return i >= j"]}, {"title": "Remets dans l'ordre : M9 Occurrence en algorithme", "lang": "algo", "lines": ["FONCTION Occurrence (c : Caractère ; ch : Chaîne) : Entier", "DEBUT", "    nb ← 0", "    Pour i de 0 à long(ch) - 1 Faire", "        Si ch[i] = c Alors", "            nb ← nb + 1", "        FinSi", "    FinPour", "    Retourner nb", "FIN"]}]}];
+const COLORS = ["var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)"];
+
+/* ---------------- storage */
+const KEY = "devoir-info-4sc-v1";
+let S = {quiz:{}, ex:{}, dv:[]};
+try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }
+
+/* ---------------- theme */
+let THEME = "auto";
+try { THEME = localStorage.getItem(KEY+"-theme") || "auto"; } catch(e) {}
+function setTheme(th){
+  THEME = th;
+  if (th==="auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", th);
+  try { localStorage.setItem(KEY+"-theme", th); } catch(e) {}
+}
+setTheme(THEME);
+
+/* ---------------- helpers */
+const $ = (s, r=document) => r.querySelector(s);
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const strip = h => h.replace(/<[^>]+>/g,"").replace(/&nbsp;/g," ").trim();
+
+const ALGO_KW = "FONCTION|PROCEDURE|ALGORITHME|DEBUT|FIN|Si|Alors|Sinon|FinSi|Pour|de|à|Faire|FinPour|Tantque|FinTantque|Répéter|Retourner|Pas";
+const ALGO_FN = "Ecrire|Lire|long|pos|sous_chaîne|effacer|majus|convch|valeur|estnum|ord|chr|abs|ent|arrondi|racinecarré|aléa";
+const ALGO_OP = "et|ou|non|div|mod";
+const PY_KW = "def|return|for|in|while|if|elif|else|and|or|not|global|from|import";
+const PY_FN = "range|len|int|str|input|print|float|array|upper|find|isnumeric|isdecimal";
+const CST = {algo:"Vrai|Faux", py:"True|False|None"};
+function wre(p){ return new RegExp("(?<![\\wÀ-ÿ])(" + p + ")(?![\\wÀ-ÿ])","g"); }
+function hlPlain(s, lang){
+  s = esc(s);
+  const R = lang==="algo" ? [[ALGO_KW,"kw"],[ALGO_FN,"fn"],[ALGO_OP,"op"],[CST.algo,"cst"]] : [[PY_KW,"kw"],[PY_FN,"fn"],[CST.py,"cst"]];
+  if (lang==="algo") s = s.replace(/Jusqu'à/g, "\u0001kw\u0002Jusqu'à\u0003");
+  for (const [p,c] of R) s = s.replace(wre(p), (m)=>"\u0001"+c+"\u0002"+m+"\u0003");
+  s = s.replace(/(?<![\w\u0001\u0002])(\d+)(?!\w)/g, m=>"\u0001num\u0002"+m+"\u0003");
+  if (lang==="algo") s = s.replace(/←/g,"\u0001arr\u0002←\u0003");
+  return s.replace(/\u0001/g,'<span class="').replace(/\u0002/g,'">').replace(/\u0003/g,"</span>");
+}
+function hl(line, lang){
+  let com = "";
+  const m = line.match(/#.*$/);
+  if (m){ const before = line.slice(0, m.index); if ((before.match(/"/g)||[]).length % 2 === 0){ com = '<span class="com">'+esc(m[0])+'</span>'; line = before; } }
+  return line.split(/("[^"]*")/).map(p => (p.length>1 && p[0]==='"' && p.at(-1)==='"') ? '<span class="str">'+esc(p)+'</span>' : hlPlain(p, lang)).join("") + com;
+}
+function pre(src, lang){
+  return "<pre>" + src.split("\n").map((l,i)=>'<span class="ln">'+(i+1)+'</span>'+(hl(l,lang)||" ")).join("\n") + "</pre>";
+}
+function face(lang, src, cons, label){
+  const lab = label || (lang==="algo" ? "ALGORITHME <span>la copie</span>" : "PYTHON <span>la machine</span>");
+  const c = cons ? '<div class="cons">'+esc(cons)+'</div>' : "";
+  return '<div class="face '+lang+'"><div class="lab">'+lab+'</div>'+pre(src,lang)+c+'</div>';
+}
+
+/* ---------------- progress */
+function exIds(ch){ const ids=[]; ch.fill.forEach((_,i)=>ids.push(ch.id+"-f"+i)); ch.trace.forEach((_,i)=>ids.push(ch.id+"-t"+i)); ch.parsons.forEach((_,i)=>ids.push(ch.id+"-p"+i)); return ids; }
+function chProgress(ch){
+  const q = (S.quiz[ch.id]||0) / ch.quiz.length;
+  const ids = exIds(ch); const e = ids.filter(i=>S.ex[i]).length / ids.length;
+  return Math.round((q*0.5 + e*0.5)*100);
+}
+function overall(){ return Math.round(DATA.reduce((a,c)=>a+chProgress(c),0)/DATA.length); }
+
+/* ---------------- rail */
+function rail(active){
+  const links = DATA.map((c,i)=>`<a href="#${c.id}" class="${active===c.id?"on":""}" style="--c:${COLORS[i]}"><span class="num">${c.n}</span><span class="t">${c.short}</span><span class="bar"><i style="width:${chProgress(c)}%"></i></span></a>`).join("");
+  $("#rail").innerHTML = `
+  <a class="brand" href="#accueil" style="text-decoration:none;color:inherit"><span class="mark">DC</span><span><b>Devoir de contrôle</b><span>Informatique · 4<sup>e</sup> Sc. exp.</span></span></a>
+  <nav class="nav"><span class="lab">Les 6 chapitres</span>${links}
+    <span class="lab">S'entraîner</span>
+    <a href="#flashcards" class="${active==="flashcards"?"on":""}" style="--c:var(--c1)"><span class="num">⇄</span><span class="t">Flashcards</span></a>
+    <a href="#devoir" class="${active==="devoir"?"on":""}" style="--c:var(--cx)"><span class="num">20</span><span class="t">Devoir blanc</span></a>
+  </nav>
+  <div class="foot"><div class="seg theme" role="group" aria-label="Thème"><button data-th="light">Clair</button><button data-th="auto">Auto</button><button data-th="dark">Sombre</button></div><span>Tout avant les tableaux. Ta progression reste dans ce navigateur.</span><button class="linkbtn" id="reset">Effacer ma progression</button></div>`;
+  document.querySelectorAll("[data-th]").forEach(x=>{ x.classList.toggle("on", x.dataset.th===THEME); x.onclick=()=>{ setTheme(x.dataset.th); rail(active); }; });
+  $("#reset").onclick = () => { const b=$("#reset"); if (b.dataset.sure){ S={quiz:{},ex:{},dv:[]}; save(); route(); } else { b.dataset.sure=1; b.textContent="Clique encore pour confirmer"; } };
+}
+
+/* ---------------- home */
+function home(){
+  document.documentElement.style.setProperty("--c","var(--c1)");
+  const all = []; DATA.forEach((c,i)=>c.quiz.forEach(q=>all.push([q,i])));
+  const [fq, fi] = all[Math.floor(Math.random()*all.length)];
+  const cards = DATA.map((c,i)=>{
+    const ids = exIds(c), d = ids.filter(x=>S.ex[x]).length;
+    return `<a class="chcard" href="#${c.id}" style="--c:${COLORS[i]}"><span class="eyebrow">Chapitre ${c.n}</span><h3>${c.title}</h3><p>${c.goal}</p>
+      <div class="stats"><span>Quiz ${S.quiz[c.id]||0}/${c.quiz.length}</span><span>Exercices ${d}/${ids.length}</span><span style="margin-left:auto">${chProgress(c)} %</span></div><div class="prog"><i style="width:${chProgress(c)}%"></i></div></a>`;
+  }).join("");
+  const last = S.dv.length ? S.dv[S.dv.length-1] : null;
+  $("#main").innerHTML = `
+  <section class="hero">
+    <div>
+      <span class="eyebrow">Informatique · Bac 2027 · Devoir de contrôle</span>
+      <h1>Six chapitres, <em>un devoir.</em></h1>
+      <p>Tout ce qui vient avant les tableaux : le dictionnaire algo ⟷ Python, les boucles, les modules, les entiers, l'arithmétique et les chaînes. Pour chaque chapitre : le cours, un quiz corrigé et des exercices à faire à la main.</p>
+      <div class="cta"><a class="btn" href="#${firstUnfinished()}">Continuer où j'en suis</a><a class="btn ghost" href="#devoir" style="--c:var(--cx)">Faire un devoir blanc</a></div>
+      <div class="meter"><span class="big">${overall()} %</span><span class="track"><i style="width:${overall()}%"></i></span><span class="muted" style="font-size:14px">${last ? "Dernier devoir blanc : <b>"+last.n+"/20</b>" : "prêt pour le devoir"}</span></div>
+    </div>
+    <div class="flashq" style="--c:${COLORS[fi]}" id="fq">
+      <div class="top"><span class="eyebrow">Question éclair · chapitre ${fi+1}</span><button class="btn small ghost" id="fqnext">Une autre</button></div>
+      <div id="fqbody"></div>
+    </div>
+  </section>
+  <div class="sech"><h2>Les chapitres</h2><span class="muted" style="font-size:14px">La barre se remplit avec ton meilleur quiz et les exercices réussis.</span></div>
+  <div class="chgrid">${cards}</div>`;
+  renderQ($("#fqbody"), fq, null, null);
+  $("#fqnext").onclick = home;
+}
+function firstUnfinished(){ const c = DATA.find(c=>chProgress(c)<100); return c ? c.id : "devoir"; }
+
+/* ---------------- one question */
+function renderQ(el, q, num, onAnswer){
+  const order = shuffle(q.o.map((t,i)=>i));
+  el.innerHTML = `<div class="qt">${num!=null?'<span class="qn">'+num+'</span>':""}<span>${q.q}</span></div>
+    <div class="opts">${order.map(i=>`<button class="opt" data-i="${i}">${esc(q.o[i])}</button>`).join("")}</div>`;
+  el.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const i = +b.dataset.i, ok = i===q.a;
+    el.querySelectorAll(".opt").forEach(x=>{ x.disabled=true; if(+x.dataset.i===q.a) x.classList.add("right"); });
+    if(!ok) b.classList.add("wrong");
+    const w = document.createElement("div"); w.className="why";
+    w.innerHTML = (ok?'<b class="v">Juste.</b> ':'<b class="x">Pas tout à fait.</b> ')+q.why; el.appendChild(w);
+    onAnswer && onAnswer(ok);
+  });
+}
+
+/* ---------------- chapter */
+let TAB = "cours", VIEW = "both";
+function chapter(ch, idx){
+  const col = COLORS[idx];
+  document.documentElement.style.setProperty("--c", col);
+  $("#main").innerHTML = `
+  <div class="chead"><span class="num">${ch.n}</span><div><span class="eyebrow">Chapitre ${ch.n} sur 6</span><h1>${ch.title}</h1></div></div>
+  <p class="goal">${ch.goal}</p>
+  <div class="tabs" role="tablist">
+    <button data-t="cours">Cours</button><button data-t="quiz">Quiz · ${ch.quiz.length}</button><button data-t="ex">Exercices · ${exIds(ch).length}</button>
+    <span class="sp"></span>
+    <span class="seg" id="seg"><button data-v="both">Les deux</button><button data-v="algo">Algo</button><button data-v="py">Python</button></span>
+  </div>
+  <div id="pane"></div>
+  <div style="display:flex;justify-content:space-between;margin-top:30px;gap:10px;flex-wrap:wrap">
+    ${idx>0?`<a class="btn ghost small" href="#${DATA[idx-1].id}" style="--c:${COLORS[idx-1]}">← ${DATA[idx-1].short}</a>`:"<span></span>"}
+    ${idx<5?`<a class="btn small" href="#${DATA[idx+1].id}" style="--c:${COLORS[idx+1]}">${DATA[idx+1].short} →</a>`:`<a class="btn small" href="#devoir" style="--c:var(--cx)">Devoir blanc →</a>`}
+  </div>`;
+  const setTab = t => { TAB=t; document.querySelectorAll(".tabs [data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===t)); $("#seg").style.visibility = t==="cours"?"visible":"hidden"; pane(ch); };
+  document.querySelectorAll(".tabs [data-t]").forEach(b=>b.onclick=()=>setTab(b.dataset.t));
+  document.querySelectorAll("#seg button").forEach(b=>b.onclick=()=>{ VIEW=b.dataset.v; segs(); applyView(); });
+  segs(); setTab(TAB);
+}
+function segs(){ document.querySelectorAll("#seg button").forEach(b=>b.classList.toggle("on",b.dataset.v===VIEW)); }
+function applyView(){ document.querySelectorAll("#pane .pair").forEach(p=>{ p.classList.toggle("only-algo",VIEW==="algo"); p.classList.toggle("only-py",VIEW==="py"); }); }
+
+function pane(ch){
+  const P = $("#pane");
+  if (TAB==="cours"){
+    P.innerHTML = ch.lesson.map(b=>{
+      if (b.t==="table") return `<div class="block">${b.title?`<h3>${b.title}</h3>`:""}<div class="tblwrap"><table class="tbl ${b.cls||""}"><tr>${b.head.map(h=>`<th>${h}</th>`).join("")}</tr>${b.rows.map(r=>"<tr>"+r.map(c=>`<td>${b.cls?c.replace(/(.*?)(<small>.*<\/small>)?$/, (m,a,s)=>esc(a)+(s||"")):c}</td>`).join("")+"</tr>").join("")}</table></div></div>`;
+      if (b.t==="boxes") return `<div class="block boxes">${b.items.map(x=>`<div class="box ${x.k}"><div class="bt">${{coeur:"Par cœur",piege:"Piège",astuce:"Astuce",cours:"Dans ton cours"}[x.k]} · ${x.title}</div>${x.html}</div>`).join("")}</div>`;
+      if (b.t==="pair") return `<div class="block"><h3>${b.title}</h3><div class="sub">${b.sub||""}</div><div class="pair">${face("algo",b.algo)}${face("py",b.py,b.cons)}</div></div>`;
+      if (b.t==="mod"){
+        const td = b.td ? `<table class="tdol"><caption>T.D.O.L</caption><tr><th>Objet</th><th>Type</th></tr>${b.td.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table>` : "";
+        return `<div class="mod"><div class="mh"><span class="tagn">${b.num}</span><h3>${b.title}</h3><span class="kind">${b.kind}</span></div>${b.note?`<div class="note">${b.note}</div>`:""}<div class="pair">${face("algo",b.algo)}${face("py",b.py,b.cons)}</div>${td}</div>`;
+      }
+      return "";
+    }).join("");
+    applyView();
+  } else if (TAB==="quiz"){
+    quiz(ch, P);
+  } else {
+    exercises(ch, P);
+  }
+}
+
+function quiz(ch, P){
+  let score=0, answered=0; const n=ch.quiz.length;
+  P.innerHTML = `<div class="qhead"><div><div class="score" id="sc">0 / ${n}</div><div class="muted" style="font-size:14px">Meilleur score : ${S.quiz[ch.id]||0} / ${n}</div></div><button class="btn small ghost" id="again">Mélanger et recommencer</button></div><div id="qs"></div>`;
+  const qs = $("#qs");
+  shuffle(ch.quiz).forEach((q,i)=>{
+    const d=document.createElement("div"); d.className="q"; qs.appendChild(d);
+    renderQ(d, q, i+1, ok=>{
+      answered++; if(ok) score++;
+      $("#sc").textContent = score+" / "+n;
+      if (answered===n){
+        if (score > (S.quiz[ch.id]||0)){ S.quiz[ch.id]=score; save(); rail(ch.id); }
+        const f=document.createElement("div"); f.className="card"; f.style.marginTop="8px";
+        f.innerHTML = `<b style="font-size:18px">${score} / ${n}</b> · ${score===n?"Parfait. Passe aux exercices.":score>=n*0.7?"Bien. Relis les explications de tes erreurs, puis recommence.":"Relis le cours de ce chapitre, puis recommence."}`;
+        qs.appendChild(f);
+      }
+    });
+  });
+  $("#again").onclick=()=>quiz(ch,P);
+}
+
+/* ---------------- exercises */
+const SYM = {"<-":"←","<>":"≠","!=":"≠",">=":"≥","<=":"≤"};
+function norm(s, lang){
+  s = s.trim().replace(/\s+/g," ");
+  if (lang==="algo"){ for (const k in SYM) if (s===k) s=SYM[k]; s = s.toLowerCase(); }
+  return s;
+}
+function mark(id){ if(!S.ex[id]){ S.ex[id]=1; save(); const a=location.hash.slice(1); rail(a); } }
+
+function exercises(ch, P){
+  let h = "";
+  if (ch.fill.length) h += `<div class="subh">Complète le code <span class="cnt">écris dans les cases, puis vérifie</span></div>` + ch.fill.map((f,i)=>exFill(ch,f,i)).join("");
+  if (ch.trace.length) h += `<div class="subh">Exécute à la main <span class="cnt">ce que tu ferais sur la copie</span></div>` + ch.trace.map((t,i)=>exTrace(ch,t,i)).join("");
+  if (ch.parsons.length) h += `<div class="subh">Remets dans l'ordre <span class="cnt">clique sur les lignes dans le bon ordre</span></div>` + ch.parsons.map((p,i)=>`<div class="ex" id="${ch.id}-p${i}"></div>`).join("");
+  P.innerHTML = h;
+  ch.fill.forEach((f,i)=>wireFill(ch,f,i));
+  ch.trace.forEach((t,i)=>wireTrace(ch,t,i));
+  ch.parsons.forEach((p,i)=>parsons(ch,p,i));
+}
+function exFill(ch,f,i){
+  const id = ch.id+"-f"+i; let k=0;
+  const lines = f.src.split("\n").map((line,li)=>{
+    const parts = line.split(/\[\[(.*?)\]\]/);
+    let out = '<span class="ln">'+(li+1)+'</span>';
+    parts.forEach((p,j)=>{
+      if (j%2===0) out += hl(p, f.lang);
+      else { const ans=p.split("|"); out += `<input class="blank" data-k="${k++}" data-a="${esc(JSON.stringify(ans)).replace(/"/g,"&quot;")}" size="${Math.max(ans[0].length,2)}" aria-label="case ${k}" autocomplete="off" spellcheck="false">`; }
+    });
+    return out;
+  }).join("\n");
+  const sym = f.lang==="algo" ? `<span class="symkeys">${["←","≠","≤","≥"].map(s=>`<button data-s="${s}" aria-label="insérer ${s}">${s}</button>`).join("")}</span>` : "";
+  return `<div class="ex" id="${id}"><div class="et"><h4>${f.title}</h4>${S.ex[id]?'<span class="done-pill">Réussi</span>':""}</div>
+    <div class="face ${f.lang}"><div class="lab">${f.lang==="algo"?"ALGORITHME":"PYTHON"}</div><pre>${lines}</pre></div>
+    <div class="exbar"><button class="btn small" data-act="check">Vérifier</button><button class="btn small ghost" data-act="show">Voir la correction</button>${sym}<span class="msg"></span></div></div>`;
+}
+function wireFill(ch,f,i){
+  const id = ch.id+"-f"+i, el = document.getElementById(id); let last=null;
+  el.querySelectorAll(".blank").forEach(b=>{ b.onfocus=()=>last=b; b.oninput=()=>{ b.classList.remove("ok","no"); b.size=Math.max(b.value.length,JSON.parse(b.dataset.a)[0].length,2); }; b.onkeydown=e=>{ if(e.key==="Enter") el.querySelector('[data-act="check"]').click(); }; });
+  el.querySelectorAll(".symkeys button").forEach(s=>s.onclick=()=>{ const b=last||el.querySelector(".blank"); b.value+=s.dataset.s; b.focus(); b.oninput(); });
+  el.querySelector('[data-act="check"]').onclick=()=>{
+    let good=0; const all=el.querySelectorAll(".blank");
+    all.forEach(b=>{ const ok = JSON.parse(b.dataset.a).some(a=>norm(a,f.lang)===norm(b.value,f.lang)); b.classList.toggle("ok",ok); b.classList.toggle("no",!ok); if(ok) good++; });
+    const m=el.querySelector(".msg");
+    if (good===all.length){ m.innerHTML='<span class="good">Tout est juste.</span>'; mark(id); }
+    else m.innerHTML=`<span class="bad">${all.length-good} case${all.length-good>1?"s":""} à revoir.</span>`;
+  };
+  el.querySelector('[data-act="show"]').onclick=()=>{ el.querySelectorAll(".blank").forEach(b=>{ b.value=JSON.parse(b.dataset.a)[0]; b.oninput(); }); el.querySelector(".msg").innerHTML='<span class="muted">Correction affichée. Efface et réessaie de mémoire.</span>'; };
+}
+function exTrace(ch,t,i){
+  const id = ch.id+"-t"+i;
+  return `<div class="ex" id="${id}"><div class="et"><h4>${t.title}</h4>${S.ex[id]?'<span class="done-pill">Réussi</span>':""}</div>
+    ${face(t.lang,t.src,null,t.lang==="algo"?"ALGORITHME":"PYTHON")}
+    <div class="exbar"><label for="${id}-in" class="msg">Résultat :</label><input class="tin" id="${id}-in" autocomplete="off" spellcheck="false" placeholder="ce qui s'affiche"><button class="btn small" data-act="check">Vérifier</button><button class="btn small ghost" data-act="show">Solution</button><span class="msg"></span></div>
+    <div class="why" hidden>${t.why}</div></div>`;
+}
+function traceOk(t, v){ const n=s=>s.trim().replace(/\s+/g," ").replace(/^['"]|['"]$/g,"").toLowerCase(); return n(v)===n(t.ans); }
+function wireTrace(ch,t,i){
+  const id=ch.id+"-t"+i, el=document.getElementById(id), inp=el.querySelector("input"), m=el.querySelectorAll(".msg")[1], w=el.querySelector(".why");
+  const check=()=>{ if(traceOk(t,inp.value)){ m.innerHTML='<span class="good">Juste.</span>'; w.hidden=false; mark(id);} else { m.innerHTML='<span class="bad">Non. Refais la trace tour par tour.</span>'; } };
+  el.querySelector('[data-act="check"]').onclick=check; inp.onkeydown=e=>{ if(e.key==="Enter") check(); };
+  el.querySelector('[data-act="show"]').onclick=()=>{ m.innerHTML=`Réponse : <code>${esc(t.ans)}</code>`; w.hidden=false; };
+}
+function parsons(ch,p,i){
+  const id=ch.id+"-p"+i, el=document.getElementById(id);
+  let pool = shuffle(p.lines.map((l,k)=>k)); let ans=[];
+  if (pool.every((v,k)=>v===k)) pool.reverse();
+  const draw=()=>{
+    el.innerHTML = `<div class="et"><h4>${p.title}</h4>${S.ex[id]?'<span class="done-pill">Réussi</span>':""}</div>
+    <div class="parsons"><div class="pz"><span class="plab">LIGNES EN VRAC</span>${pool.map(k=>`<button class="pline" data-k="${k}" data-z="pool">${hl(p.lines[k].trim(),p.lang)}</button>`).join("")||'<span class="muted" style="padding:6px;font-size:14px">Plus rien ici.</span>'}</div>
+    <div class="pz ans"><span class="plab">TON ${p.lang==="algo"?"ALGORITHME":"PROGRAMME"}</span>${ans.map(k=>`<button class="pline" data-k="${k}" data-z="ans">${hl(p.lines[k],p.lang)}</button>`).join("")}</div></div>
+    <div class="exbar"><button class="btn small" data-act="check">Vérifier</button><button class="btn small ghost" data-act="reset">Recommencer</button><span class="msg"></span></div>`;
+    el.querySelectorAll(".pline").forEach(b=>b.onclick=()=>{ const k=+b.dataset.k; if(b.dataset.z==="pool"){ pool=pool.filter(x=>x!==k); ans.push(k);} else { ans=ans.filter(x=>x!==k); pool.push(k);} draw(); });
+    el.querySelector('[data-act="reset"]').onclick=()=>{ pool=shuffle(p.lines.map((l,k)=>k)); ans=[]; draw(); };
+    el.querySelector('[data-act="check"]').onclick=()=>{
+      const m=el.querySelector(".msg");
+      if (pool.length){ m.innerHTML='<span class="bad">Place toutes les lignes d\'abord.</span>'; return; }
+      const firstBad = ans.findIndex((k,j)=>p.lines[k]!==p.lines[j]);
+      if (firstBad<0){ m.innerHTML='<span class="good">Bon ordre.</span>'; mark(id); el.querySelector(".et").innerHTML=`<h4>${p.title}</h4><span class="done-pill">Réussi</span>`; }
+      else m.innerHTML=`<span class="bad">La ligne ${firstBad+1} n'est pas à sa place.</span>`;
+    };
+  };
+  draw();
+}
+
+/* ---------------- flashcards */
+function flashcards(){
+  document.documentElement.style.setProperty("--c","var(--c1)");
+  const t = DATA[0].lesson[0]; const cards=[];
+  t.rows.forEach(r=>{ cards.push([strip(r[0]),strip(r[1])]); cards.push([strip(r[2]),strip(r[3])]); });
+  let deck = shuffle(cards), i=0, dir="ap", known=0;
+  const draw=()=>{
+    const [a,p] = deck[i]; const front = dir==="ap"?a:p, back = dir==="ap"?p:a;
+    $("#main").innerHTML = `<span class="eyebrow">S'entraîner</span><h1 style="font-size:34px;margin:6px 0 6px">Flashcards du dictionnaire</h1>
+    <p class="goal">Lis la carte, donne la traduction à voix haute, puis retourne-la. ${cards.length} cartes, dans les deux sens.</p>
+    <div class="flash"><div class="fc" id="fc" tabindex="0" role="button" aria-label="Retourner la carte">
+      <div class="side front"><span class="lab">${dir==="ap"?"ALGORITHME":"PYTHON"}</span><span class="big">${esc(front)}</span><span class="muted" style="font-size:13px">clique pour retourner</span></div>
+      <div class="side back"><span class="lab">${dir==="ap"?"PYTHON":"ALGORITHME"}</span><span class="big">${esc(back)}</span></div></div></div>
+    <div class="fnav"><button class="btn small ghost" id="prev">← Précédente</button><span class="muted" style="font-variant-numeric:tabular-nums">${i+1} / ${deck.length}</span><button class="btn small" id="next">Suivante →</button></div>
+    <div class="fnav"><span class="seg"><button data-d="ap" class="${dir==="ap"?"on":""}">Algo → Python</button><button data-d="pa" class="${dir==="pa"?"on":""}">Python → Algo</button></span><button class="btn small ghost" id="mix">Mélanger</button></div>`;
+    const fc=$("#fc"); fc.onclick=()=>fc.classList.toggle("flip"); fc.onkeydown=e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); fc.classList.toggle("flip"); } };
+    $("#next").onclick=()=>{ i=(i+1)%deck.length; draw(); }; $("#prev").onclick=()=>{ i=(i-1+deck.length)%deck.length; draw(); };
+    $("#mix").onclick=()=>{ deck=shuffle(cards); i=0; draw(); };
+    document.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{ dir=b.dataset.d; draw(); });
+  };
+  draw();
+}
+
+/* ---------------- devoir blanc */
+let DV=null;
+function devoir(){
+  document.documentElement.style.setProperty("--c","var(--cx)");
+  if (DV && DV.running){ drawDevoir(); return; }
+  const hist = S.dv.length ? `<div class="hist">${S.dv.slice(-8).map(d=>`<span>${d.n}/20 <small>${d.d}</small></span>`).join("")}</div>` : '<span class="muted">Pas encore de devoir blanc.</span>';
+  $("#main").innerHTML = `<span class="eyebrow">S'entraîner</span><h1 style="font-size:clamp(30px,4vw,44px);margin:6px 0 8px">Devoir blanc</h1>
+  <p class="goal">20 questions tirées au hasard dans les six chapitres : 14 questions de cours et 6 exécutions à la main. 30 minutes, une note sur 20, la correction de chaque question à la fin.</p>
+  <div class="card" style="display:flex;flex-direction:column;gap:14px;max-width:640px">
+    <div><b>Tes dernières notes</b><div style="margin-top:8px">${hist}</div></div>
+    <div><button class="btn" id="go">Commencer le devoir</button></div>
+  </div>`;
+  $("#go").onclick=startDevoir;
+}
+function startDevoir(){
+  const qs=[], tr=[];
+  DATA.forEach((c,i)=>{ c.quiz.forEach(q=>qs.push({type:"q",q,ci:i})); c.trace.forEach(t=>tr.push({type:"t",t,ci:i})); });
+  const items = shuffle(shuffle(qs).slice(0,14).concat(shuffle(tr).slice(0,6)));
+  items.forEach(it=>{ if(it.type==="q") it.order=shuffle(it.q.o.map((_,k)=>k)); it.ans=null; });
+  DV={items, end:Date.now()+30*60*1000, running:true};
+  drawDevoir();
+}
+function drawDevoir(){
+  const it=DV.items;
+  $("#main").innerHTML = `<div class="dvstick"><div><span class="eyebrow">Devoir blanc</span><div class="muted" style="font-size:14px" id="dvc"></div></div><span class="timer" id="tm"></span><button class="btn" id="rendre">Rendre la copie</button></div><div id="dvq"></div>`;
+  const box=$("#dvq");
+  it.forEach((x,k)=>{
+    const d=document.createElement("div"); d.className="q"; d.style.setProperty("--c",COLORS[x.ci]);
+    if (x.type==="q"){
+      d.innerHTML=`<div class="tagch">Chapitre ${x.ci+1}</div><div class="qt"><span class="qn">${k+1}</span><span>${x.q.q}</span></div><div class="opts">${x.order.map(i=>`<button class="opt ${x.ans===i?"right":""}" data-i="${i}">${esc(x.q.o[i])}</button>`).join("")}</div>`;
+      d.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{ x.ans=+b.dataset.i; d.querySelectorAll(".opt").forEach(o=>o.classList.toggle("right",o===b)); count(); });
+    } else {
+      d.innerHTML=`<div class="tagch">Chapitre ${x.ci+1} · exécution</div><div class="qt"><span class="qn">${k+1}</span><span>${x.t.title}</span></div>${face(x.t.lang,x.t.src,null,x.t.lang==="algo"?"ALGORITHME":"PYTHON")}<div class="exbar"><label class="msg" for="dv${k}">Résultat :</label><input class="tin" id="dv${k}" autocomplete="off" spellcheck="false" value="${x.ans?esc(x.ans).replace(/"/g,"&quot;"):""}"></div>`;
+      d.querySelector("input").oninput=e=>{ x.ans=e.target.value; count(); };
+    }
+    box.appendChild(d);
+  });
+  $("#rendre").onclick=finishDevoir;
+  count(); tick();
+}
+function count(){ const n=DV.items.filter(x=>x.ans!==null&&x.ans!=="").length; const e=$("#dvc"); if(e) e.textContent=n+" / 20 réponses"; }
+let TIMER=null;
+function tick(){
+  clearInterval(TIMER);
+  const f=()=>{ const t=$("#tm"); if(!t||!DV||!DV.running){ clearInterval(TIMER); return; } const r=Math.max(0,DV.end-Date.now()); const m=Math.floor(r/60000), s=Math.floor(r/1000)%60; t.textContent=m+":"+String(s).padStart(2,"0"); t.classList.toggle("low",r<5*60000); if(r<=0) finishDevoir(); };
+  f(); TIMER=setInterval(f,1000);
+}
+function finishDevoir(){
+  if(!DV||!DV.running) return; DV.running=false; clearInterval(TIMER);
+  let n=0; DV.items.forEach(x=>{ x.ok = x.type==="q" ? x.ans===x.q.a : (x.ans? traceOk(x.t,x.ans):false); if(x.ok) n++; });
+  const dt=new Date(); S.dv.push({n, d:dt.getDate()+"/"+(dt.getMonth()+1)}); save();
+  const per=DATA.map((c,i)=>{ const its=DV.items.filter(x=>x.ci===i); return [i,its.filter(x=>x.ok).length,its.length]; }).filter(x=>x[2]);
+  const weak=per.filter(p=>p[1]/p[2]<0.6).map(p=>`<a href="#${DATA[p[0]].id}" style="color:${COLORS[p[0]]};font-weight:800">${DATA[p[0]].short}</a>`);
+  $("#main").innerHTML = `<span class="eyebrow">Devoir blanc · corrigé</span>
+  <div class="card result" style="margin:10px 0 20px"><span class="note ${n>=10?"good":"bad"}">${n}<small style="font-size:24px">/20</small></span>
+    <div><b style="font-size:18px">${n>=16?"Très bien.":n>=12?"Bien.":n>=10?"La moyenne est là.":"Il faut retravailler."}</b>
+    <div class="muted" style="margin-top:4px">${per.map(p=>`${DATA[p[0]].short} ${p[1]}/${p[2]}`).join(" · ")}</div>
+    ${weak.length?`<div style="margin-top:6px">À revoir en priorité : ${weak.join(", ")}</div>`:""}</div>
+    <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="again">Un autre devoir</button><a class="btn ghost" href="#accueil">Accueil</a></div></div>
+  <div id="corr"></div>`;
+  const C=$("#corr");
+  DV.items.forEach((x,k)=>{
+    const d=document.createElement("div"); d.className="q"; d.style.setProperty("--c",COLORS[x.ci]);
+    if (x.type==="q"){
+      d.innerHTML=`<div class="qt"><span class="qn">${k+1}</span><span>${x.q.q}</span></div><div class="opts">${x.order.map(i=>`<button class="opt ${i===x.q.a?"right":(i===x.ans?"wrong":"")}" disabled>${esc(x.q.o[i])}</button>`).join("")}</div><div class="why">${x.ok?'<b class="v">Juste.</b> ':(x.ans===null?'<b class="x">Sans réponse.</b> ':'<b class="x">Faux.</b> ')}${x.q.why}</div>`;
+    } else {
+      d.innerHTML=`<div class="qt"><span class="qn">${k+1}</span><span>${x.t.title}</span></div>${face(x.t.lang,x.t.src,null,x.t.lang==="algo"?"ALGORITHME":"PYTHON")}<div class="why">${x.ok?'<b class="v">Juste.</b>':'<b class="x">'+(x.ans?"Ta réponse : "+esc(x.ans)+".":"Sans réponse.")+'</b>'} Réponse : <code>${esc(x.t.ans)}</code>. ${x.t.why}</div>`;
+    }
+    C.appendChild(d);
+  });
+  $("#again").onclick=startDevoir;
+  rail("devoir"); window.scrollTo(0,0);
+}
+
+/* ---------------- router */
+function route(){
+  const h = location.hash.slice(1) || "accueil";
+  const idx = DATA.findIndex(c=>c.id===h);
+  if (h!=="devoir" && DV && DV.running){ /* devoir keeps running in background */ }
+  if (idx>=0){ if (route.last!==h) TAB="cours"; rail(h); chapter(DATA[idx], idx); }
+  else if (h==="devoir"){ rail(h); devoir(); }
+  else if (h==="flashcards"){ rail(h); flashcards(); }
+  else { rail("accueil"); home(); }
+  route.last=h; window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
