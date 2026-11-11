@@ -77,7 +77,8 @@ main{padding:30px clamp(16px,4vw,48px) 80px;max-width:1100px;width:100%}
 .muted{color:var(--muted)}
 .btn{text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;font-weight:800;font-size:15px;background:var(--c);color:#fff;border:2px solid var(--c);transition:transform .12s}
 :root[data-theme="dark"] .btn{color:#0f1218}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#0f1218}}
+:root[data-theme="dark"] .btn.ghost{color:var(--c)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#0f1218}:root:not([data-theme="light"]) .btn.ghost{color:var(--c)}}
 .btn:hover{transform:translateY(-1px)}
 .btn.ghost{background:transparent;color:var(--c)}
 .btn.small{padding:6px 12px;font-size:13.5px;border-radius:10px}
