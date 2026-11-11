@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Révision Devoir de contrôle Info</title>
+<title>Algo ⟷ Python · Info 4e Sc</title>
 <script>try{var th=localStorage.getItem("devoir-info-4sc-v1-theme")||"dark";if(th!=="auto")document.documentElement.setAttribute("data-theme",th);document.documentElement.setAttribute("data-mode",th==="auto"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):th);}catch(e){document.documentElement.setAttribute("data-theme","dark");document.documentElement.setAttribute("data-mode","dark");}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -407,7 +407,7 @@ function rail(active){
   const L = levels();
   const link = l => `<a href="#${l.id}" class="${active===l.id?"on":""}" style="--c:${COLORS[l.n-1]}"><span class="hx">${l.n}</span><span class="t"><small>${RANKS[l.n-1]}</small>${l.short}</span><span class="bar"><i style="width:${l.p}%"></i></span></a>`;
   $("#rail").innerHTML = `
-  <a class="brand" href="#accueil"><span class="mark">DC</span><span><b>Devoir de contrôle</b><span>Informatique · 4<sup>e</sup> Sc. exp.</span></span></a>
+  <a class="brand" href="#accueil"><span class="mark">⟷</span><span><b>Algo ⟷ Python</b><span>Informatique · 4<sup>e</sup> Sc. exp.</span></span></a>
   <nav class="nav"><span class="lab">Le cours · 6 chapitres</span>${L.slice(0,6).map(link).join("")}
     <span class="lab">Séries et sujets du prof</span>${L.slice(6).map(link).join("")}
     <span class="lab">S'entraîner</span>
@@ -442,8 +442,8 @@ function home(){
   $("#main").innerHTML = `
   <section class="cover">
     <div class="kick">INFORMATIQUE · 4<sup>e</sup> SCIENCES EXPÉRIMENTALES · DEVOIR DE CONTRÔLE</div>
-    <h1>De zéro à <em>Challenger</em></h1>
-    <p>Dix niveaux pour réussir le devoir : les six chapitres du cours, puis les séries, le chapitre 5 et les sujets pratiques de ta prof, avec leur correction en algorithme et en Python.</p>
+    <h1>Algo <em>⟷</em> Python</h1>
+    <p>Le cours complet d'informatique en dix niveaux : les six chapitres, puis les séries, le chapitre 5 et les sujets pratiques de ta prof, avec leur correction en algorithme et en Python.</p>
     <div class="stats"><b>10</b> niveaux<br><b>${nq}</b> questions<br><b>${nex}</b> exercices corrigés</div>
     <div class="tiles">${tiles}</div>
   </section>
